@@ -6,16 +6,14 @@
 
 #include "jy901.h"
 
-JY901::JY901(const std::string &dev, const unsigned int baud)
-: m_uartBaud(baud),
-  m_uartDev(dev)
-  {
+JY901::JY901()
+{
     m_serialFd = serialOpen(JY901_UART_DEV, JY901_UART_BAUD);
     if (m_serialFd < 0)
         log_e("JY901 uart init failed");
 }
 
-void J901::rawToData(void) noexcept
+void J901::rawToData() noexcept
 {
     switch (m_rxBuffer[1])
     {

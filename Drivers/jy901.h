@@ -140,7 +140,7 @@ class JY901
 {
 public:
     //定义构造与析构函数
-    JY901(const std::string& dev = JY901_UART_DEV, const unsigned int baud = JY901_UART_BAUD); //传入自定义的设备号和串口波特率
+    JY901(); //传入自定义的设备号和串口波特率
 
     //定义成员函数
     void inputData(uint8_t data) noexcept;   //传入一个字节的原始串口数据包
@@ -151,8 +151,6 @@ private:
     jy901_t m_sensorData;    //传感器数据
     jy901_raw_t m_sensorRaw; //传感器原始数据
     uint8_t m_rxBuffer[JY901_PACKET_LENGTH + 1] = {0};   //接收缓存区
-    const std::string m_uartDev;  //设备串口路径
-    const uint32_t m_uartBaud;    //设备使用的波特率
     int m_serialFd;  //串口获取到的描述值
 
     const uint8_t m_JY901_RESET_CMD[JY901_CMD_LENGTH] = {0xFF, 0xAA, 0x00, 0x01, 0x00}; // 0x00-设置保存  0x01-恢复出厂设置并保存
