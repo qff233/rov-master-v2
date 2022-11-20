@@ -3,20 +3,12 @@
 //
 
 #define LOG_TAG "JY901"
-<<<<<<< Updated upstream
 
 #include <elog.h>
 #include <wiringPi.h>
 #include <wiringSerial.h>
-=======
->>>>>>> Stashed changes
 
 #include "jy901.h"
-
-#include <elog.h>
-#include <wiringPi.h>
-#include <wiringSerial.h>
-
 
 JY901::JY901()
 {
@@ -35,11 +27,6 @@ void JY901::rawToData() noexcept
             m_sensorData.acc.y = (m_sensorRaw.stcAcc.a[1] / 32768.0f*16);
             m_sensorData.acc.z = (m_sensorRaw.stcAcc.a[2] / 32768.0f*16);
             m_sensorData.temperature = (m_sensorRaw.stcAcc.T / 100.0f);
-<<<<<<< Updated upstream
-            //printf("acc %0.2f %0.2f %0.2f  %0.2fC\n", m_sensorData.acc.x, m_sensorData.acc.y, m_sensorData.acc.z, m_sensorData.temperature);
-=======
-            //printf("acc %0.2f %0.2f %0.2f  %0.2fC\n", m_sensorData->acc.x, m_sensorData->acc.y, m_sensorData->acc.z, m_sensorData->temperature);
->>>>>>> Stashed changes
         }
             break;
         case 0x52:
@@ -47,11 +34,6 @@ void JY901::rawToData() noexcept
             m_sensorData.gyro.x = (float)m_sensorRaw.stcGyro.w[0] / 2048 * 125; // 32768*2000
             m_sensorData.gyro.y = (float)m_sensorRaw.stcGyro.w[1] / 2048 * 125;
             m_sensorData.gyro.z = (float)m_sensorRaw.stcGyro.w[2] / 2048 * 125;
-<<<<<<< Updated upstream
-            //printf("gyro %0.2f %0.2f %0.2f\n", m_sensorData.gyro.x, m_sensorData.gyro.y, m_sensorData.gyro.z);
-=======
-            //printf("gyro %0.2f %0.2f %0.2f\n", m_sensorData->gyro.x, m_sensorData->gyro.y, m_sensorData->gyro.z);
->>>>>>> Stashed changes
         }
             break;
         case 0x53:
@@ -59,11 +41,6 @@ void JY901::rawToData() noexcept
             m_sensorData.roll = (((m_sensorRaw.stcAngle.angle[1]<<8)|(m_sensorRaw.stcAngle.angle[0])) / 32768.0f*180); // 32768*180;
             m_sensorData.pitch= (((m_sensorRaw.stcAngle.angle[3]<<8)|(m_sensorRaw.stcAngle.angle[2])) / 32768.0f*180);
             m_sensorData.yaw  = (((m_sensorRaw.stcAngle.angle[5]<<8)|(m_sensorRaw.stcAngle.angle[4])) / 32768.0f*180);
-<<<<<<< Updated upstream
-            //printf("angle %0.2f %0.2f %0.2f\n", m_sensorData.roll, m_sensorData.pitch, m_sensorData.yaw);
-=======
-            //printf("angle %0.2f %0.2f %0.2f\n", m_sensorData->roll, m_sensorData->pitch, m_sensorData->yaw);
->>>>>>> Stashed changes
         }
             break;
         case 0x54:
@@ -71,22 +48,12 @@ void JY901::rawToData() noexcept
             m_sensorData.mag.x = m_sensorRaw.stcMag.h[0];
             m_sensorData.mag.y = m_sensorRaw.stcMag.h[1];
             m_sensorData.mag.z = m_sensorRaw.stcMag.h[2];
-<<<<<<< Updated upstream
-            //printf("mag %d %d %d\n", m_sensorData.mag.x, m_sensorData.mag.y, m_sensorData.mag.z);
-=======
-            //printf("mag %d %d %d\n", m_sensorData->mag.x, m_sensorData->mag.y, m_sensorData->mag.z);
->>>>>>> Stashed changes
         }
             break;
         case 0x56: // 气压值
         {
             m_sensorData.pressure = m_sensorRaw.stcPress.lPressure;
             m_sensorData.altitude = m_sensorRaw.stcPress.lAltitude;
-<<<<<<< Updated upstream
-            //printf("mag %d %d %d\n", m_sensorData.mag.x, m_sensorData.mag.y, m_sensorData.mag.z);
-=======
-            //printf("mag %d %d %d\n", m_sensorData->mag.x, m_sensorData->mag.y, m_sensorData->mag.z);
->>>>>>> Stashed changes
         }
             break;
         default:

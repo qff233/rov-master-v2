@@ -5,11 +5,6 @@
 #ifndef _JY901_H
 #define _JY901_H
 
-<<<<<<< Updated upstream
-=======
-#include <cstdint>
-
->>>>>>> Stashed changes
 #include "../User/config.h"
 
 #define JY901_UART_DEV "/dev/ttyS2" // JY901 UART 号
@@ -152,8 +147,8 @@ public:
     void reset() const noexcept;
     const jy901_t& getData() const noexcept; //读取jy901的数据
     int getFd() const noexcept;  //获取fd
-
     float getYaw() const noexcept;
+
 private:
     jy901_t m_sensorData;    //传感器数据
     jy901_raw_t m_sensorRaw; //传感器原始数据
