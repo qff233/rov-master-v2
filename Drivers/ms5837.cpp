@@ -39,12 +39,6 @@ void MS5837::rawToData(uint8_t packet_length) noexcept
             location[location_count++] = i;
         }
     }
-    //for (int i = 0; i < packet_length; i++)
-    //{
-    //    printf("rebuff[] = %c " , m_rxBuffer[i]);
-    //}
-    //printf("\r\n");
-    //计算标志位差
     location_diffren_termpe = location[1] - location[0] ;
     location_diffren_depth  = location[3] - location[2] ;
     /*--------------------计算温度------------------------------*/

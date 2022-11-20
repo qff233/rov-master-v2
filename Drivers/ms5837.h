@@ -5,13 +5,13 @@
 #ifndef _MS5837_H
 #define _MS5837_H
 
-#include "../User/config.h"
+#include "../user/config.h"
 
-#define MS5837_UART_DEV "/dev/ttyS1" // JY901 UART 号
-#define MS5837_UART_BAUD 115200         // JY901 UART 波特率
+#define MS5837_UART_DEV "/dev/ttyS1"
+#define MS5837_UART_BAUD 115200
 
-#define MS5837_PACKET_LENGTH 11   // JY901 数据包长度
-#define MS5837_CMD_LENGTH 5       // JY901 命令长度
+#define MS5837_PACKET_LENGTH 11
+#define MS5837_CMD_LENGTH 5
 
 struct ms5837_t
 {
