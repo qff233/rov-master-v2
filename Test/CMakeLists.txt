@@ -1,6 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(rov_master_se)
+cmake_minimum_required(VERSION 3.5)
 
-set(CMAKE_CXX_STANDARD 11)
+add_executable(test_jy901 test_jy901.cpp)
+target_link_libraries(test_jy901 rov_driver)
 
-add_executable(rov_master_se main.cpp Drivers/jy901.cpp Drivers/jy901.h config.h)

@@ -5,7 +5,7 @@
 #ifndef _MS5837_H
 #define _MS5837_H
 
-#include "../user/config.h"
+#include "../User/config.h"
 
 #define MS5837_UART_DEV "/dev/ttyS1" // JY901 UART 号
 #define MS5837_UART_BAUD 115200         // JY901 UART 波特率
