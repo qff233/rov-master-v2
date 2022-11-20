@@ -5,7 +5,7 @@
 #ifndef _JY901_H
 #define _JY901_H
 
-#include "../user/config.h"
+#include "../User/config.h"
 
 #define JY901_UART_DEV "/dev/ttyS2" // JY901 UART 号
 #define JY901_UART_BAUD 9600         // JY901 UART 波特率
@@ -144,6 +144,7 @@ public:
 
     //定义成员函数
     void inputData(uint8_t data) noexcept;   //传入一个字节的原始串口数据包
+    void reset() const noexcept;
     const jy901_t& getData() const noexcept; //读取jy901的数据
     int getFd() const noexcept;  //获取fd
 

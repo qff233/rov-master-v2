@@ -2,7 +2,11 @@
 // Created by fxf on 22-11-19.
 //
 
-#include <string>
+#define LOG_TAG "JY901"
+
+#include <elog.h>
+#include <wiringPi.h>
+#include <wiringSerial.h>
 
 #include "jy901.h"
 
@@ -13,53 +17,58 @@ JY901::JY901()
         log_e("JY901 uart init failed");
 }
 
-void J901::rawToData() noexcept
+void JY901::rawToData() noexcept
 {
     switch (m_rxBuffer[1])
     {
         case 0x51:
         {
-            m_sensorData->acc.x = (m_sensorRaw.stcAcc.a[0] / 32768.0f*16); // 32768*16
-            m_sensorData->acc.y = (m_sensorRaw.stcAcc.a[1] / 32768.0f*16);
-            m_sensorData->acc.z = (m_sensorRaw.stcAcc.a[2] / 32768.0f*16);
-            m_sensorData->temperature = (m_sensorRaw.stcAcc.T / 100.0f);
-            //printf("acc %0.2f %0.2f %0.2f  %0.2fC\n", m_sensorData->acc.x, m_sensorData->acc.y, m_sensorData->acc.z, m_sensorData->temperature);
+            m_sensorData.acc.x = (m_sensorRaw.stcAcc.a[0] / 32768.0f*16); // 32768*16
+            m_sensorData.acc.y = (m_sensorRaw.stcAcc.a[1] / 32768.0f*16);
+            m_sensorData.acc.z = (m_sensorRaw.stcAcc.a[2] / 32768.0f*16);
+            m_sensorData.temperature = (m_sensorRaw.stcAcc.T / 100.0f);
+            //printf("acc %0.2f %0.2f %0.2f  %0.2fC\n", m_sensorData.acc.x, m_sensorData.acc.y, m_sensorData.acc.z, m_sensorData.temperature);
         }
             break;
         case 0x52:
         {
-            m_sensorData->gyro.x = (float)m_sensorRaw.stcGyro.w[0] / 2048 * 125; // 32768*2000
-            m_sensorData->gyro.y = (float)m_sensorRaw.stcGyro.w[1] / 2048 * 125;
-            m_sensorData->gyro.z = (float)m_sensorRaw.stcGyro.w[2] / 2048 * 125;
-            //printf("gyro %0.2f %0.2f %0.2f\n", m_sensorData->gyro.x, m_sensorData->gyro.y, m_sensorData->gyro.z);
+            m_sensorData.gyro.x = (float)m_sensorRaw.stcGyro.w[0] / 2048 * 125; // 32768*2000
+            m_sensorData.gyro.y = (float)m_sensorRaw.stcGyro.w[1] / 2048 * 125;
+            m_sensorData.gyro.z = (float)m_sensorRaw.stcGyro.w[2] / 2048 * 125;
+            //printf("gyro %0.2f %0.2f %0.2f\n", m_sensorData.gyro.x, m_sensorData.gyro.y, m_sensorData.gyro.z);
         }
             break;
         case 0x53:
         {
-            m_sensorData->roll = (((m_sensorRaw.stcAngle.angle[1]<<8)|(m_sensorRaw.stcAngle.angle[0])) / 32768.0f*180); // 32768*180;
-            m_sensorData->pitch= (((m_sensorRaw.stcAngle.angle[3]<<8)|(m_sensorRaw.stcAngle.angle[2])) / 32768.0f*180);
-            m_sensorData->yaw  = (((m_sensorRaw.stcAngle.angle[5]<<8)|(m_sensorRaw.stcAngle.angle[4])) / 32768.0f*180);
-            //printf("angle %0.2f %0.2f %0.2f\n", m_sensorData->roll, m_sensorData->pitch, m_sensorData->yaw);
+            m_sensorData.roll = (((m_sensorRaw.stcAngle.angle[1]<<8)|(m_sensorRaw.stcAngle.angle[0])) / 32768.0f*180); // 32768*180;
+            m_sensorData.pitch= (((m_sensorRaw.stcAngle.angle[3]<<8)|(m_sensorRaw.stcAngle.angle[2])) / 32768.0f*180);
+            m_sensorData.yaw  = (((m_sensorRaw.stcAngle.angle[5]<<8)|(m_sensorRaw.stcAngle.angle[4])) / 32768.0f*180);
+            //printf("angle %0.2f %0.2f %0.2f\n", m_sensorData.roll, m_sensorData.pitch, m_sensorData.yaw);
         }
             break;
         case 0x54:
         {
-            m_sensorData->mag.x = m_sensorRaw.stcMag.h[0];
-            m_sensorData->mag.y = m_sensorRaw.stcMag.h[1];
-            m_sensorData->mag.z = m_sensorRaw.stcMag.h[2];
-            //printf("mag %d %d %d\n", m_sensorData->mag.x, m_sensorData->mag.y, m_sensorData->mag.z);
+            m_sensorData.mag.x = m_sensorRaw.stcMag.h[0];
+            m_sensorData.mag.y = m_sensorRaw.stcMag.h[1];
+            m_sensorData.mag.z = m_sensorRaw.stcMag.h[2];
+            //printf("mag %d %d %d\n", m_sensorData.mag.x, m_sensorData.mag.y, m_sensorData.mag.z);
         }
             break;
         case 0x56: // 气压值
         {
-            m_sensorData->pressure = m_sensorRaw.stcPress.lPressure;
-            m_sensorData->altitude = m_sensorRaw.stcPress.lAltitude;
-            //printf("mag %d %d %d\n", m_sensorData->mag.x, m_sensorData->mag.y, m_sensorData->mag.z);
+            m_sensorData.pressure = m_sensorRaw.stcPress.lPressure;
+            m_sensorData.altitude = m_sensorRaw.stcPress.lAltitude;
+            //printf("mag %d %d %d\n", m_sensorData.mag.x, m_sensorData.mag.y, m_sensorData.mag.z);
         }
             break;
         default:
             break;
     }
+}
+
+void JY901::reset() const noexcept
+{
+    write(m_serialFd, m_JY901_RESET_CMD, 5);
 }
 
 void JY901::inputData(uint8_t data) noexcept
