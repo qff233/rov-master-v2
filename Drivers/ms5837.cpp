@@ -18,40 +18,17 @@ MS5837::MS5837()
         log_e("JY901 uart init failed");
 }
 
-void MS5837::rawToData() noexcept
-{
-
-}
-
-void MS5837::inputData(uint8_t data) noexcept
+void MS5837::rawToData(uint8_t packet_length) noexcept
 {
     static uint8_t rxDate_count;
     static uint8_t rxCheck = 0;        // 尾校验字
-    static uint8_t rxCount = 0;        // 接收计数
     static uint8_t location[5];       //D标志位坐标
     static uint8_t location_count;
     static uint8_t location_diffren_termpe;       //标志位坐标差
     static uint8_t location_diffren_depth;       //标志位坐标差
     static uint8_t arrey_conut;
-    static uint8_t ms5837_packet_length;
-
-    m_rxBuffer[rxCount++] = data; // 将收到的数据存入缓冲区中
-    if (m_rxBuffer[0] != 'T')
-    {
-    // 数据头不对，则重新开始寻找'T'数据头
-    rxCount = 0; // 清空长度缓存
-    return;
-    }
-
-    if (m_rxBuffer[rxCount-1] != '\n')
-    {
-        //还没收集到数据尾，展时不处理
-        return;
-    }
-    ms5837_packet_length = rxCount;
-
-    /*-----------------t提取字符串中的数字和 标记小数点的位子------*/
-    for (int i = 0; i < ms5837_packet_length; i++)
+/*-----------------t提取字符串中的数字和 标记小数点的位子------*/
+    for (int i = 0; i < packet_length; i++)
     {
         if (isdigit(m_rxBuffer[i]))                   //若为数字 存入数据数组中
         {
@@ -62,7 +39,7 @@ void MS5837::inputData(uint8_t data) noexcept
             location[location_count++] = i;
         }
     }
-    //for (int i = 0; i < ms5837_packet_length; i++)
+    //for (int i = 0; i < packet_length; i++)
     //{
     //    printf("rebuff[] = %c " , m_rxBuffer[i]);
     //}
@@ -105,6 +82,38 @@ void MS5837::inputData(uint8_t data) noexcept
     arrey_conut = 0;
     location_count  = 0;
     rxDate_count = 0;
-    rxCount = 0; // 清空缓存区
     rxCheck = 1; // 校验位清零
+}
+
+void MS5837::inputData(uint8_t data) noexcept
+{
+    static uint8_t rxCount = 0;        // 接收计数
+    static uint8_t ms5837_packet_length;
+
+    m_rxBuffer[rxCount++] = data; // 将收到的数据存入缓冲区中
+    if (m_rxBuffer[0] != 'T')
+    {
+    // 数据头不对，则重新开始寻找'T'数据头
+    rxCount = 0; // 清空长度缓存
+    return;
+    }
+
+    if (m_rxBuffer[rxCount-1] != '\n')
+    {
+        //还没收集到数据尾，展时不处理
+        return;
+    }
+    ms5837_packet_length = rxCount;
+    rawToData(ms5837_packet_length);
+    rxCount = 0; // 清空缓存区
+}
+
+const ms5837_t& MS5837::getData() const noexcept
+{
+    return m_sensorData;
+}
+
+int MS5837::getFd() const noexcept
+{
+    return m_serialFd;
 }

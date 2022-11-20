@@ -34,7 +34,7 @@ private:
     uint8_t m_rxData[20] = {0};
     int m_serialFd;
 
-    void rawToData() noexcept;
+    void rawToData(uint8_t packet_length) noexcept;
 };
 
 #endif //_MS5837_H
