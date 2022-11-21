@@ -6,6 +6,8 @@
 
 #include "jy901.h"
 
+using namespace std;
+
 JY901::JY901()
 {
     m_serialFd = serialOpen(JY901_UART_DEV, JY901_UART_BAUD);
@@ -59,7 +61,7 @@ void JY901::rawToData() noexcept
 
 void JY901::reset() const noexcept
 {
-    write(m_serialFd, m_JY901_RESET_CMD, 5);
+    serialPutdata(m_serialFd, m_JY901_RESET_CMD, JY901_CMD_LENGTH);
 }
 
 void JY901::inputData(uint8_t data) noexcept

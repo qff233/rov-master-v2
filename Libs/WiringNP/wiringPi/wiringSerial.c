@@ -158,6 +158,19 @@ void serialPuts (const int fd, const char *s)
   write (fd, s, strlen (s)) ;
 }
 
+
+/*
+ * serialPutdata:
+ *	Send a group to the serial port
+ *********************************************************************************
+ */
+
+void serialPutdata (const int fd, const char *s, size_t len)
+{
+  write (fd, s, len) ;
+}
+
+
 /*
  * serialPrintf:
  *	Printf over Serial

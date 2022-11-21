@@ -151,7 +151,7 @@ private:
     std::uint8_t m_rxBuffer[JY901_PACKET_LENGTH + 1] = {0};   //接收缓存区
     int m_serialFd;  //串口获取到的描述值
 
-    const std::uint8_t m_JY901_RESET_CMD[JY901_CMD_LENGTH] = {0xFF, 0xAA, 0x00, 0x01, 0x00}; // 0x00-设置保存  0x01-恢复出厂设置并保存
+    const char m_JY901_RESET_CMD[JY901_CMD_LENGTH] = {0xFF, 0xAA, 0x00, 0x01, 0x00}; // 0x00-设置保存  0x01-恢复出厂设置并保存
 
     void rawToData() noexcept;   //把raw数据转换为data数据
 };
