@@ -1,0 +1,10 @@
+*.o
+*.so
+*~
+*.a
+*.d
+*.os
+*.pyc
+*dblite
+*-test
+*-ex*
