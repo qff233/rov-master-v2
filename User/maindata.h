@@ -6,7 +6,7 @@
 #define _MAINDATA_H
 
 /* ROV设备 */
-typedef struct
+struct rovDev_t
 {
     // 简单PWM设备
     easyPWM_dev_t yuntai;
@@ -16,10 +16,10 @@ typedef struct
     // 推进器设备
     propellerPower_t propellerPower;
 
-} rovDev_t;
+};
 
 /* ROV状态信息结构体 */
-typedef struct
+struct rovInfo_t
 {
     char type;                 // 系统状态
     char name[20];             // 航行器名称
@@ -32,7 +32,7 @@ typedef struct
     disk_t disk;     // 硬盘
     memory_t memory; // 内存
 
-} rovInfo_t;
+};
 
 extern rovDev_t rovdev;
 extern rovInfo_t rovInfo;

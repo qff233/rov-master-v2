@@ -2,11 +2,11 @@
  * @desc: rpc协议所使用的方法函数
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 #include <wiringPi.h>
 
 #include "../applications/data.h"
@@ -15,6 +15,8 @@
 #include "../user/datatype.h"
 #include "cjson_anal.h"
 #include "crpcfunc.h"
+
+using namespace std;
 
 /**
   * @brief  创建机器人状态信息json对象

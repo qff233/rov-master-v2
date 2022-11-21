@@ -10,7 +10,7 @@
 #ifndef _CJSON_ANAL_H
 #define _CJSON_ANAL_H
 
-#include "../user/config.h"
+#include "../config.h"
 #include "rpcdata.h"
 #include "cjson.h"
 #include "jsonrpc.h"

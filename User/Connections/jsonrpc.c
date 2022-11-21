@@ -1,10 +1,3 @@
-/*
- * jsonrpc-c.c
- *
- *  Created on: Oct 11, 2012
- *      Author: hmng
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -15,7 +8,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <elog.h>
+#include <ev.h>
 
 #include "jsonrpc.h"
 

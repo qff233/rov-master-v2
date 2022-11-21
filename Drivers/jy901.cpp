@@ -1,7 +1,3 @@
-//
-// Created by fxf on 22-11-19.
-//
-
 #define LOG_TAG "JY901"
 
 #include <elog.h>
@@ -14,7 +10,7 @@ JY901::JY901()
 {
     m_serialFd = serialOpen(JY901_UART_DEV, JY901_UART_BAUD);
     if (m_serialFd < 0)
-        log_e("JY901 uart init failed");
+        log_e("Unable to get the fd");
 }
 
 void JY901::rawToData() noexcept

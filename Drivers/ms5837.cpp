@@ -1,11 +1,7 @@
-//
-// Created by fxf on 22-11-20.
-//
-
 #define LOG_TAG "MS5837"
 
 #include <elog.h>
-#include <string>
+#include <cctype>
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
@@ -15,22 +11,22 @@ MS5837::MS5837()
 {
     m_serialFd = serialOpen(MS5837_UART_DEV, MS5837_UART_BAUD);
     if (m_serialFd < 0)
-        log_e("JY901 uart init failed");
+        log_e("Unable to get the fd");
 }
 
-void MS5837::rawToData(uint8_t packet_length) noexcept
+void MS5837::rawToData(std::uint8_t packet_length) noexcept
 {
-    static uint8_t rxDate_count;
-    static uint8_t rxCheck = 0;        // 尾校验字
-    static uint8_t location[5];       //D标志位坐标
-    static uint8_t location_count;
-    static uint8_t location_diffren_termpe;       //标志位坐标差
-    static uint8_t location_diffren_depth;       //标志位坐标差
-    static uint8_t arrey_conut;
+    static std::uint8_t rxDate_count;
+    static std::uint8_t rxCheck = 0;        // 尾校验字
+    static std::uint8_t location[5];       //D标志位坐标
+    static std::uint8_t location_count;
+    static std::uint8_t location_diffren_termpe;       //标志位坐标差
+    static std::uint8_t location_diffren_depth;       //标志位坐标差
+    static std::uint8_t arrey_conut;
 /*-----------------t提取字符串中的数字和 标记小数点的位子------*/
     for (int i = 0; i < packet_length; i++)
     {
-        if (isdigit(m_rxBuffer[i]))                   //若为数字 存入数据数组中
+        if (std::isdigit(m_rxBuffer[i]))                   //若为数字 存入数据数组中
         {
             m_rxData[rxDate_count++] = m_rxBuffer[i]-48;
         }
@@ -79,10 +75,10 @@ void MS5837::rawToData(uint8_t packet_length) noexcept
     rxCheck = 1; // 校验位清零
 }
 
-void MS5837::inputData(uint8_t data) noexcept
+void MS5837::inputData(std::uint8_t data) noexcept
 {
-    static uint8_t rxCount = 0;        // 接收计数
-    static uint8_t ms5837_packet_length;
+    static std::uint8_t rxCount = 0;        // 接收计数
+    static std::uint8_t ms5837_packet_length;
 
     m_rxBuffer[rxCount++] = data; // 将收到的数据存入缓冲区中
     if (m_rxBuffer[0] != 'T')

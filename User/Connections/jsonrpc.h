@@ -1,10 +1,3 @@
-/*
- * jsonrpc-c.h
- *
- *  Created on: Oct 11, 2012
- *      Author: hmng
- */
-
 #ifndef JSONRPCC_H_
 #define JSONRPCC_H_
 

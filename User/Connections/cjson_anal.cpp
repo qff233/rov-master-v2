@@ -2,13 +2,13 @@
  * @desc: rpc方法函数参数解析
  */
 
-#define LOG_TAG "rpc"
+#define LOG_TAG "RPC"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdlib>
+#include <cstdio>
 #include <elog.h>
 #include <unistd.h> 
-#include <string.h>
+#include <cstring>
 
 #include "cjson_anal.h"
 #include "../drivers/pca9685.h"
@@ -16,6 +16,7 @@
 #include "../control/control.h"
 #include "../user/datatype.h"
 
+using namespace std;
 
 float expect_depth_auv;   //上位机期望深度
 float expect_rotate_auv;  //上位机期望转动方向

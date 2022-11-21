@@ -1,7 +1,3 @@
-//
-// Created by fxf on 22-11-20.
-//
-
 #ifndef _MS5837_H
 #define _MS5837_H
 
@@ -24,17 +20,17 @@ class MS5837
 public:
     MS5837();
 
-    void inputData(uint8_t data) noexcept;
+    void inputData(std::uint8_t data) noexcept;
     const ms5837_t& getData() const noexcept;
     int getFd() const noexcept;  //获取fd
 
 private:
     ms5837_t m_sensorData;
-    uint8_t m_rxBuffer[20] = {0};
-    uint8_t m_rxData[20] = {0};
+    std::uint8_t m_rxBuffer[20] = {0};
+    std::uint8_t m_rxData[20] = {0};
     int m_serialFd;
 
-    void rawToData(uint8_t packet_length) noexcept;
+    void rawToData(std::uint8_t packet_length) noexcept;
 };
 
 #endif //_MS5837_H

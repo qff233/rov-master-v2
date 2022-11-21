@@ -7,7 +7,7 @@
 
 #include "cjson.h"
 
-typedef struct
+struct cjson_set_propeller_parameters_t
 {
     int     deadzone_upper;    // 死区上限
     int     deadzone_lower;    // 死区下限
@@ -16,10 +16,10 @@ typedef struct
     int     reversed;          // 反转
     int     reversed_flag;     // 反转
     int     enabled;           // 启用/禁用推进器
-}cjson_set_propeller_parameters_t;
+};
 
 //推进器参数数据结构，需要增加推进器 加该数据结构中
-typedef struct
+struct propeller_conpent_t
 {
     cjson_set_propeller_parameters_t back_left;     // 左后
     cjson_set_propeller_parameters_t back_right;    //..
@@ -28,28 +28,28 @@ typedef struct
     cjson_set_propeller_parameters_t front_left;    //..
     cjson_set_propeller_parameters_t front_right;   //..
 
-}propeller_conpent_t;
+};
 
 /*     PID 调试参数      */
-typedef struct
+struct pid_debug_t
 {
     double p;
     double i;
     double d;
 
-}pid_debug_t;
+};
 
 /*     总 PID 调试参数      */
-typedef struct
+struct pid_debug_arrey_t
 {
     pid_debug_t direction_lock;
     pid_debug_t depth_lock;
 
-}pid_debug_arrey_t;
+};
 
 
 /*调试模式推进器直接输出结构体*/
-typedef struct
+struct propeller_directer_value_t
 {
     short front_left;
     short front_right;
@@ -58,19 +58,19 @@ typedef struct
     short center_left;
     short center_right;
 
-}propeller_directer_value_t;
+};
 
 /*原始手柄数据结构体*/
-typedef struct cjson_test
+struct rocket_raw_t
 {
     double x;  //左右
     double y;  //前后
     double z;  //上下
     double yaw;
 
-}rocket_raw_t;
+};
 
-typedef struct
+struct cmd_t
 {
     /* 开关类 */
     uint8_t all_lock;   //【总开关】 0x01锁定(默认)、0x00解锁
@@ -84,7 +84,7 @@ typedef struct
     uint8_t yuntai; //【云台】	0x01 向上、0x02 向下、  0x00表示不动作（默认）
     uint8_t arm;    //【机械臂】0x01 张开、0x02 关闭、  0x00表示不动作（默认）
 
-} cmd_t; /* 控制命令 */
+}; /* 控制命令 */
 
 extern pid_debug_arrey_t pid_debug_arrey;
 extern propeller_conpent_t propeller_conpent_value;
