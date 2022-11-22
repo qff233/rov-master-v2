@@ -1,4 +1,5 @@
 #define LOG_TAG "JY901"
+#define LOG_LVL ELOG_LVL_INFO
 
 #include <elog.h>
 #include <wiringPi.h>
@@ -134,7 +135,7 @@ void JY901::inputData(uint8_t data) noexcept
     rxCheck = 0; // 校验位清零
 }
 
-const jy901_t& JY901::getData() const noexcept
+const jy901_data& JY901::getData() const noexcept
 {
     return m_sensorData;
 }

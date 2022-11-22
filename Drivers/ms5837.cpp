@@ -1,4 +1,5 @@
 #define LOG_TAG "MS5837"
+#define LOG_LVL ELOG_LVL_INFO
 
 #include <elog.h>   // log_e()
 #include <cctype>   // isdigit()
@@ -100,7 +101,7 @@ void MS5837::inputData(uint8_t data) noexcept
     rxCount = 0; // 清空缓存区
 }
 
-const ms5837_t& MS5837::getData() const noexcept
+const ms5837_data& MS5837::getData() const noexcept
 {
     return m_sensorData;
 }

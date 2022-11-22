@@ -84,7 +84,7 @@ struct SQ
 };
 
 /* JY901 原始数据 */
-struct jy901_raw_t
+struct jy901_raw
 {
     STime stcTime;
     SAcc stcAcc;
@@ -117,7 +117,7 @@ struct Vector3s
 };
 
 /* JY901 真实数据 */
-struct jy901_t
+struct jy901_data
 {
     Vector3f acc;     //加速度
     Vector3f gyro;    //角速度
@@ -141,13 +141,13 @@ public:
     //定义成员函数
     void inputData(std::uint8_t data) noexcept;   //传入一个字节的原始串口数据包
     void reset() const noexcept;
-    const jy901_t& getData() const noexcept; //读取jy901的数据
+    const jy901_data& getData() const noexcept; //读取jy901的数据
     int getFd() const noexcept;  //获取fd
     float getYaw() const noexcept;
 
 private:
-    jy901_t m_sensorData;    //传感器数据
-    jy901_raw_t m_sensorRaw; //传感器原始数据
+    jy901_data m_sensorData;    //传感器数据
+    jy901_raw m_sensorRaw; //传感器原始数据
     std::uint8_t m_rxBuffer[JY901_PACKET_LENGTH + 1] = {0};   //接收缓存区
     int m_serialFd;  //串口获取到的描述值
 
