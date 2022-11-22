@@ -1,3 +1,4 @@
+//未完成........................
 //
 // Created by fxf on 22-11-22.
 //
@@ -46,7 +47,7 @@ class PCA9685
 public:
     PCA9685(const int pinBase = PCA9685_PIN_BASE, float freq = 50);
 
-    void setPwmFreq(float freq) noexcept;
+    void setPwmFreq(int fd, float freq) noexcept;
 
 private:
     int getRegAddress(int pin);

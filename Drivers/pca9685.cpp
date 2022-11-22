@@ -1,3 +1,6 @@
+//未完成........................
+//WiringPi与类并不兼容，需要修改相关API
+
 //
 // Created by fxf on 22-11-22.
 //
@@ -48,10 +51,10 @@ PCA9685::PCA9685(const int pinBase, float freq)
     }
 
     // 设置 PWM 频率，启动输出
-    pca9685PWMSetFreq(fd, freq);
+    setPwmFreq(fd, freq);
 
     // 创建节点 16 pins [0..15] + [16] for all
-    node = wiringPiNewNode(pinBase, PIN_ALL + 1);
+    node = wiringPiNewNode(pinBase, NUM_PINS + 1);
     if (!node)
     {
         log_e("Cannot create new wiringPiNode");
@@ -65,9 +68,11 @@ PCA9685::PCA9685(const int pinBase, float freq)
 
     // 重置所有输出
     reset(fd);
+
+    //后面要加初始化标志位
 }
 
-void PCA9685::setPwmFreq(float freq) noexcept
+void PCA9685::setPwmFreq(int fd, float freq) noexcept
 {
     /**  MODE1 寄存器
     * Restart and set Mode1 register to our prefered mode:
@@ -123,7 +128,7 @@ void PCA9685::reset(int fd)
 
 void PCA9685::writePwmToPin(int fd, int pin, int on, int off)
 {
-    int reg = baseReg(pin);
+    int reg = getRegAddress(pin);
 
     // 可写入位 12bit，最大值为 4095    on + off = 4095
     wiringPiI2CWriteReg16(fd, reg, on & 0x0FFF);
@@ -132,7 +137,7 @@ void PCA9685::writePwmToPin(int fd, int pin, int on, int off)
 
 void PCA9685::resetToPin(int fd, int pin, int tf)
 {
-    int reg = baseReg(pin) + 3; // LEDX_OFF_H 寄存器
+    int reg = getRegAddress(pin) + 3; // LEDX_OFF_H 寄存器
     int state = wiringPiI2CReadReg8(fd, reg);
 
     // 根据 tf 设置 第4bit 为 0 or 1
@@ -143,7 +148,7 @@ void PCA9685::resetToPin(int fd, int pin, int tf)
 
 void PCA9685::setToPin(int fd, int pin, int tf)
 {
-    int reg = baseReg(pin) + 1; // LEDX_ON_H 寄存器
+    int reg = getRegAddress(pin) + 1; // LEDX_ON_H 寄存器
     int state = wiringPiI2CReadReg8(fd, reg);
 
     // 根据 tf 设置 第4bit 为 0 or 1
