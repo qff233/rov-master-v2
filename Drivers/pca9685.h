@@ -50,13 +50,13 @@ public:
     void setPwmFreq(int fd, float freq) noexcept;
 
 private:
-    int getRegAddress(int pin);
-    void reset(int fd); //pca9685PWMReset
-    void writePwmToPin(int fd, int pin, int on, int off);   //pca9685PWMWrite
-    void resetToPin(int fd, int pin, int tf);  //pca9685FullOff
-    void setToPin(int fd, int pin, int tf);  //pca9685FullOn
-    void myPwmWrite(struct wiringPiNodeStruct *node, int pin, int value);
-    void myDigitalWrite(struct wiringPiNodeStruct *node, int pin, int value);
+    static int GetRegAddress(int pin);
+    static void Reset(int fd); //pca9685PWMReset
+    static void WritePwmToPin(int fd, int pin, int on, int off);   //pca9685PWMWrite
+    static void ResetPin(int fd, int pin, int tf);  //pca9685FullOff
+    static void SetPin(int fd, int pin, int tf);  //pca9685FullOn
+    static void MyPwmWrite(struct wiringPiNodeStruct *node, int pin, int value);
+    static void MyDigitalWrite(struct wiringPiNodeStruct *node, int pin, int value);
 };
 
 #endif //_PCA9685_H

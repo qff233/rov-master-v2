@@ -16,7 +16,7 @@
 class RPCServer
 {
 public:
-    RPCServer(std::string& address, uint16_t port = RPC_SERVER_PORT);
+    RPCServer(const std::string& address = RPC_SERVER_ADDRESS, uint16_t port = RPC_SERVER_PORT);
 
 private:
     Json::Rpc::TcpServer* server;

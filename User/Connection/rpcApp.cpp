@@ -10,9 +10,7 @@ using namespace std;
 
 bool RPCAPP::info(const Json::Value& root, Json::Value& response)
 {
-    std::string temp = " ℃";
-    temp = std::to_string(rovInfo.cpu.temperature) + temp;
-    response["温度"] = Json::Value(temp);
+    response["温度"] = Json::Value(std::to_string(rovInfo.cpu.temperature) + " ℃");
     return true;
 }
 

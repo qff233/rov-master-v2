@@ -1,5 +1,4 @@
 //未完成........................
-//WiringPi与类并不兼容，需要修改相关API
 
 //
 // Created by fxf on 22-11-22.
@@ -63,11 +62,11 @@ PCA9685::PCA9685(const int pinBase, float freq)
 
     // 注册方法
     node->fd = fd;
-    node->pwmWrite = myPwmWrite;
-    node->digitalWrite = myDigitalWrite;
+    node->pwmWrite = MyPwmWrite;
+    node->digitalWrite = MyDigitalWrite;
 
     // 重置所有输出
-    reset(fd);
+    Reset(fd);
 
     //后面要加初始化标志位
 }
@@ -114,30 +113,30 @@ void PCA9685::setPwmFreq(int fd, float freq) noexcept
     wiringPiI2CWriteReg8(fd, PCA9685_MODE1, restart);
 }
 
-int PCA9685::getRegAddress(int pin)
+int PCA9685::GetRegAddress(int pin)
 {
     // 计算获得对应引脚寄存器地址 (见datasheet P9)
-    return (pin >= PIN_ALL ? LEDALL_ON_L : LED0_ON_L + 4 * pin);
+    return (pin >= NUM_PINS ? LEDALL_ON_L : LED0_ON_L + 4 * pin);
 }
 
-void PCA9685::reset(int fd)
+void PCA9685::Reset(int fd)
 {
     wiringPiI2CWriteReg16(fd, LEDALL_ON_L, 0x0);        // ALL_LED full ON  失能
     wiringPiI2CWriteReg16(fd, LEDALL_ON_L + 2, 0x1000); // ALL_LED full OFF 使能
 }
 
-void PCA9685::writePwmToPin(int fd, int pin, int on, int off)
+void PCA9685::WritePwmToPin(int fd, int pin, int on, int off)
 {
-    int reg = getRegAddress(pin);
+    int reg = GetRegAddress(pin);
 
     // 可写入位 12bit，最大值为 4095    on + off = 4095
     wiringPiI2CWriteReg16(fd, reg, on & 0x0FFF);
     wiringPiI2CWriteReg16(fd, reg + 2, off & 0x0FFF);
 }
 
-void PCA9685::resetToPin(int fd, int pin, int tf)
+void PCA9685::ResetPin(int fd, int pin, int tf)
 {
-    int reg = getRegAddress(pin) + 3; // LEDX_OFF_H 寄存器
+    int reg = GetRegAddress(pin) + 3; // LEDX_OFF_H 寄存器
     int state = wiringPiI2CReadReg8(fd, reg);
 
     // 根据 tf 设置 第4bit 为 0 or 1
@@ -146,9 +145,9 @@ void PCA9685::resetToPin(int fd, int pin, int tf)
     wiringPiI2CWriteReg8(fd, reg, state);
 }
 
-void PCA9685::setToPin(int fd, int pin, int tf)
+void PCA9685::SetPin(int fd, int pin, int tf)
 {
-    int reg = getRegAddress(pin) + 1; // LEDX_ON_H 寄存器
+    int reg = GetRegAddress(pin) + 1; // LEDX_ON_H 寄存器
     int state = wiringPiI2CReadReg8(fd, reg);
 
     // 根据 tf 设置 第4bit 为 0 or 1
@@ -158,24 +157,24 @@ void PCA9685::setToPin(int fd, int pin, int tf)
 
     //  full-off 优先级高于 full-on (datasheet P23)
     if (tf)
-        resetToPin(fd, pin, 0);
+        ResetPin(fd, pin, 0);
 }
 
-void PCA9685::myPwmWrite(struct wiringPiNodeStruct *node, int pin, int value)
+void PCA9685::MyPwmWrite(struct wiringPiNodeStruct *node, int pin, int value)
 {
     int fd = node->fd;
     int ipin = pin - node->pinBase;
 
-    if (value >= 4096) setToPin(fd, ipin, 1);
-    else if (value > 0) writePwmToPin(fd, ipin, 0, value);
-    else resetToPin(fd, ipin, 1);
+    if (value >= 4096) SetPin(fd, ipin, 1);
+    else if (value > 0) WritePwmToPin(fd, ipin, 0, value);
+    else ResetPin(fd, ipin, 1);
 }
 
-void PCA9685::myDigitalWrite(struct wiringPiNodeStruct *node, int pin, int value)
+void PCA9685::MyDigitalWrite(struct wiringPiNodeStruct *node, int pin, int value)
 {
     int fd = node->fd;
     int ipin = pin - node->pinBase;
 
-    if (value) setToPin(fd, ipin, 1);
-    else resetToPin(fd, ipin, 1);
+    if (value) SetPin(fd, ipin, 1);
+    else ResetPin(fd, ipin, 1);
 }

@@ -8,7 +8,9 @@
 
 #include "rpcServer.h"
 
-RPCServer::RPCServer(std::string &address, uint16_t port)
+using namespace std;
+
+RPCServer::RPCServer(const std::string &address, uint16_t port)
 {
     server = new Json::Rpc::TcpServer(address, port);
     if(!networking::init())
