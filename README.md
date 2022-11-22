@@ -1,3 +1,9 @@
+# rov-master-v2
+
+### 架构图
+
+![](Pngs/mind.png)
+
 ## 变量
 
 - 线程变量`t_`开头
@@ -16,8 +22,13 @@ static thread_local t_exampleVar;
 
 - ***不抛异常**在后面加上 `noexcept`*
 
-
 ## 类和结构体
+
+##### 设计思路
+
+- 使得后续的修改应尽可能小的修改类的代码
+
+  ![](Pngs/design_class_example1.png)
 
 ##### 命名
 
@@ -60,7 +71,7 @@ private:
 
 ## 下位机驱动类规范
 
-#####  四个基本成员函数
+#####  三个基本成员函数
 
 ```c++
 1. void reset();
@@ -68,3 +79,4 @@ private:
 3. const jy901_t& getDate() const
 ```
 
+> 后续添加了事件系统后 还应暴露出当这个驱动事件触发时要执行的函数
