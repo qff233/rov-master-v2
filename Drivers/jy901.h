@@ -1,13 +1,11 @@
-#ifndef _JY901_H
-#define _JY901_H
+#ifndef __DRIVERS_JY901_H__
+#define __DRIVERS_JY901_H__
 
-#include "../User/config.h"
-
-#define JY901_UART_DEV "/dev/ttyS2" // JY901 UART 号
-#define JY901_UART_BAUD 9600         // JY901 UART 波特率
+#include "User/config.h"
 
 #define JY901_PACKET_LENGTH 11   // JY901 数据包长度
 #define JY901_CMD_LENGTH 5       // JY901 命令长度
+
 
 /* 时间 */
 struct STime
@@ -84,7 +82,7 @@ struct SQ
 };
 
 /* JY901 原始数据 */
-struct jy901_raw
+struct Jy901Raw
 {
     STime stcTime;
     SAcc stcAcc;
@@ -117,7 +115,7 @@ struct Vector3s
 };
 
 /* JY901 真实数据 */
-struct jy901_data
+struct Jy901Data
 {
     Vector3f acc;     //加速度
     Vector3f gyro;    //角速度
@@ -141,14 +139,15 @@ public:
     //定义成员函数
     void inputData(std::uint8_t data) noexcept;   //传入一个字节的原始串口数据包
     void reset() const noexcept;
-    const jy901_data& getData() const noexcept; //读取jy901的数据
+
+    const Jy901Data& getData() const noexcept; //读取jy901的数据
     int getFd() const noexcept;  //获取fd
     float getYaw() const noexcept;
 
 private:
-    jy901_data m_sensorData;    //传感器数据
-    jy901_raw m_sensorRaw; //传感器原始数据
-    std::uint8_t m_rxBuffer[JY901_PACKET_LENGTH + 1] = {0};   //接收缓存区
+    Jy901Data m_sensorData;    //传感器数据
+    Jy901Raw m_sensorRaw; //传感器原始数据
+    uint8_t m_rxBuffer[JY901_PACKET_LENGTH + 1] = {0};   //接收缓存区
     int m_serialFd;  //串口获取到的描述值
 
     const char m_JY901_RESET_CMD[JY901_CMD_LENGTH] = {0xFF, 0xAA, 0x00, 0x01, 0x00}; // 0x00-设置保存  0x01-恢复出厂设置并保存
@@ -156,4 +155,4 @@ private:
     void rawToData() noexcept;   //把raw数据转换为data数据
 };
 
-#endif //_JY901_H
+#endif //__DRIVERS_JY901_H__

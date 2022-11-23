@@ -8,6 +8,10 @@
 
 #include "jy901.h"
 
+#define JY901_UART_DEV "/dev/ttyS2" // JY901 UART 号
+#define JY901_UART_BAUD 9600         // JY901 UART 波特率
+
+
 using namespace std;
 
 JY901::JY901()
@@ -140,7 +144,7 @@ void JY901::inputData(uint8_t data) noexcept
     rxCheck = 0; // 校验位清零
 }
 
-const jy901_data &JY901::getData() const noexcept
+const Jy901Data &JY901::getData() const noexcept
 {
     return m_sensorData;
 }

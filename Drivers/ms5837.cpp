@@ -8,6 +8,12 @@
 
 #include "ms5837.h"
 
+#define MS5837_UART_DEV "/dev/ttyS1"
+#define MS5837_UART_BAUD 115200
+
+#define MS5837_PACKET_LENGTH 11
+#define MS5837_CMD_LENGTH 5
+
 using namespace std;
 
 MS5837::MS5837()
@@ -118,7 +124,7 @@ void MS5837::inputData(uint8_t data) noexcept
     rxCount = 0; // 清空缓存区
 }
 
-const ms5837_data &MS5837::getData() const noexcept
+const Ms5837Data &MS5837::getData() const noexcept
 {
     return m_sensorData;
 }

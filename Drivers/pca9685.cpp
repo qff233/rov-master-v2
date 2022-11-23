@@ -13,7 +13,41 @@
 
 #include "pca9685.h"
 
-PCA9685::PCA9685(const int pinBase, float freq)
+#define PCA9685_I2C_DEV "/dev/i2c-0" // PCA9685 使用的 I2C设备
+#define PCA9685_I2C_ADDR 0x40        // 将A0-A5全部接地，则其器件地址为:0x40
+#define PCA9685_EN_PIN 7             // 芯片使能引脚 -> GPIO11引脚序号为 7
+
+#define PCA9685_OSC_CLK 25000000.0f // PCA9685晶振时钟频率Hz
+
+#define PCA9685_SUBADR1 0x2
+#define PCA9685_SUBADR2 0x3
+#define PCA9685_SUBADR3 0x4
+
+#define PCA9685_MODE1 0x0
+#define PCA9685_PRESCALE 0xFE // prescaler to program the output frequency
+
+#define PCA9685_PIN_BASE 300
+#define NUM_PINS 16
+
+#define LED0_ON_L 0x6
+#define LED0_ON_H 0x7
+#define LED0_OFF_L 0x8
+#define LED0_OFF_H 0x9
+
+#define LEDALL_ON_L 0xFA
+#define LEDALL_ON_H 0xFB
+#define LEDALL_OFF_L 0xFC
+#define LEDALL_OFF_H 0xFD
+
+/* sleep 模式 */
+#define NORNAL_MODE 0b0
+#define SLEEP_MODE 0b1
+
+/* restart 开关 */
+#define DISABLE_RESTART 0b0
+#define ENABLE_RESTART 0b1
+
+PCA9685::PCA9685(const int pinBase, float freq) noexcept
 {
     int fd;
     int settings, autoInc;
@@ -71,7 +105,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
     //后面要加初始化标志位
 }
 
-void PCA9685::setPwmFreq(int fd, float freq) noexcept
+void PCA9685::setPwmFreq(float freq) noexcept
 {
     /**  MODE1 寄存器
     * Restart and set Mode1 register to our prefered mode:
@@ -104,29 +138,29 @@ void PCA9685::setPwmFreq(int fd, float freq) noexcept
     int restart = wake | 0x80;                                    // Set restart bit to 1
 
     // Go to sleep, set prescale and wake up again.
-    wiringPiI2CWriteReg8(fd, PCA9685_MODE1, sleep);
-    wiringPiI2CWriteReg8(fd, PCA9685_PRESCALE, prescale);
-    wiringPiI2CWriteReg8(fd, PCA9685_MODE1, wake);
+    wiringPiI2CWriteReg8(m_fd, PCA9685_MODE1, sleep);
+    wiringPiI2CWriteReg8(m_fd, PCA9685_PRESCALE, prescale);
+    wiringPiI2CWriteReg8(m_fd, PCA9685_MODE1, wake);
 
     // Now wait a millisecond until oscillator finished stabilizing and restart PWM.
     delay(1);
-    wiringPiI2CWriteReg8(fd, PCA9685_MODE1, restart);
+    wiringPiI2CWriteReg8(m_fd, PCA9685_MODE1, restart);
 }
 
-int PCA9685::GetRegAddress(int pin)
+int PCA9685::GetRegAddress(int pin) noexcept
 {
     // 计算获得对应引脚寄存器地址 (见datasheet P9)
     return (pin >= NUM_PINS ? LEDALL_ON_L : LED0_ON_L + 4 * pin);
 }
 
-void PCA9685::Reset(int fd)
+void PCA9685::Reset(int fd) noexcept
 {
     wiringPiI2CWriteReg16(fd, LEDALL_ON_L, 0x0);        // ALL_LED full ON  失能
     wiringPiI2CWriteReg16(fd, LEDALL_ON_L + 2, 0x1000); // ALL_LED full OFF 使能
 }
 
-void PCA9685::WritePwmToPin(int fd, int pin, int on, int off)
-{
+void PCA9685::WritePwmToPin(int fd, int pin, int on, int off) noexcept
+{ 
     int reg = GetRegAddress(pin);
 
     // 可写入位 12bit，最大值为 4095    on + off = 4095
@@ -134,7 +168,7 @@ void PCA9685::WritePwmToPin(int fd, int pin, int on, int off)
     wiringPiI2CWriteReg16(fd, reg + 2, off & 0x0FFF);
 }
 
-void PCA9685::ResetPin(int fd, int pin, int tf)
+void PCA9685::ResetPin(int fd, int pin, int tf) noexcept
 {
     int reg = GetRegAddress(pin) + 3; // LEDX_OFF_H 寄存器
     int state = wiringPiI2CReadReg8(fd, reg);
@@ -145,7 +179,7 @@ void PCA9685::ResetPin(int fd, int pin, int tf)
     wiringPiI2CWriteReg8(fd, reg, state);
 }
 
-void PCA9685::SetPin(int fd, int pin, int tf)
+void PCA9685::SetPin(int fd, int pin, int tf) noexcept
 {
     int reg = GetRegAddress(pin) + 1; // LEDX_ON_H 寄存器
     int state = wiringPiI2CReadReg8(fd, reg);
@@ -160,7 +194,7 @@ void PCA9685::SetPin(int fd, int pin, int tf)
         ResetPin(fd, pin, 0);
 }
 
-void PCA9685::MyPwmWrite(struct wiringPiNodeStruct *node, int pin, int value)
+void PCA9685::PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept
 {
     int fd = node->fd;
     int ipin = pin - node->pinBase;
@@ -170,7 +204,7 @@ void PCA9685::MyPwmWrite(struct wiringPiNodeStruct *node, int pin, int value)
     else ResetPin(fd, ipin, 1);
 }
 
-void PCA9685::MyDigitalWrite(struct wiringPiNodeStruct *node, int pin, int value)
+void PCA9685::DigitalWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept
 {
     int fd = node->fd;
     int ipin = pin - node->pinBase;
