@@ -1,4 +1,3 @@
-//未完成........................
 //
 // Created by fxf on 22-11-22.
 //
@@ -8,6 +7,8 @@
 
 #include "User/config.h"
 
+#define PCA9685_PIN_BASE 300
+
 class PCA9685
 {
 public:
@@ -15,15 +16,14 @@ public:
 
     void setPwmFreq(float freq) noexcept;
 private:
-    static int GetRegAddress(int pin) noexcept;
-    static void Reset(int fd) noexcept; //pca9685PWMReset
-    static void WritePwmToPin(int fd, int pin, int on, int off) noexcept;   //pca9685PWMWrite
-    static void ResetPin(int fd, int pin, int tf) noexcept;  //pca9685FullOff
-    static void SetPin(int fd, int pin, int tf) noexcept;  //pca9685FullOn
-    static void PwmWriteCallBack(struct wiringPiNodeStruct *node, int pin, int value) noexcept;
-    static void DigitalWriteCallBack(struct wiringPiNodeStruct *node, int pin, int value) noexcept;
-
     int m_fd;
+
+    static void PCA9685::PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
+    static void PCA9685::DigitalWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
+    static void PCA9685::SetPin(int fd, int pin, int tf) noexcept;
+    static void PCA9685::ResetPin(int fd, int pin, int tf) noexcept;
+    static void PCA9685::WritePwmToPin(int fd, int pin, int on, int off) noexcept;
+    static int PCA9685::GetRegAddress(int pin) noexcept;
 };
 
 #endif //__DRIVERS_PCA9685_H__
