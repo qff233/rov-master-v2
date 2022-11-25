@@ -9,8 +9,7 @@
 #include "jy901.h"
 
 #define JY901_UART_DEV "/dev/ttyS2" // JY901 UART 号
-#define JY901_UART_BAUD 9600         // JY901 UART 波特率
-
+#define JY901_UART_BAUD 9600        // JY901 UART 波特率
 
 using namespace std;
 
@@ -22,7 +21,7 @@ JY901::JY901()
         log_e("Unable to get the fd");
         return;
     }
-    //后面要加初始化标志位
+    // 后面要加初始化标志位
 }
 
 void JY901::rawToData() noexcept
@@ -92,7 +91,7 @@ void JY901::inputData(uint8_t data) noexcept
 
     /*********** 只有接收满11个字节数据 才会进入以下程序 ************/
     for (int i = 0; i < JY901_PACKET_LENGTH - 1; i++)
-        rxCheck += m_rxBuffer[i]; //校验位累加
+        rxCheck += m_rxBuffer[i]; // 校验位累加
 
     if (rxCheck == m_rxBuffer[JY901_PACKET_LENGTH - 1]) // 判断数据包校验是否正确
     {

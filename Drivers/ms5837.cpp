@@ -24,7 +24,7 @@ MS5837::MS5837()
         log_e("Unable to get the fd");
         return;
     }
-    //后面要加初始化标志位
+    // 后面要加初始化标志位
 }
 
 void MS5837::rawToData(uint8_t packet_length) noexcept
@@ -33,17 +33,17 @@ void MS5837::rawToData(uint8_t packet_length) noexcept
     static uint8_t rxCheck = 0; // 尾校验字
     static uint8_t location[5]; // D标志位坐标
     static uint8_t location_count;
-    static uint8_t location_diffren_termpe; //标志位坐标差
-    static uint8_t location_diffren_depth;  //标志位坐标差
+    static uint8_t location_diffren_termpe; // 标志位坐标差
+    static uint8_t location_diffren_depth;  // 标志位坐标差
     static uint8_t arrey_conut;
     /*-----------------t提取字符串中的数字和 标记小数点的位子------*/
     for (int i = 0; i < packet_length; i++)
     {
-        if (isdigit(m_rxBuffer[i])) //若为数字 存入数据数组中
+        if (isdigit(m_rxBuffer[i])) // 若为数字 存入数据数组中
         {
             m_rxData[rxDate_count++] = m_rxBuffer[i] - 48;
         }
-        if (m_rxBuffer[i] == '.' || m_rxBuffer[i] == '=') //若为小数点 标记两个小数点的位子 计算差值 用于下列
+        if (m_rxBuffer[i] == '.' || m_rxBuffer[i] == '=') // 若为小数点 标记两个小数点的位子 计算差值 用于下列
         {
             location[location_count++] = i;
         }
@@ -58,7 +58,7 @@ void MS5837::rawToData(uint8_t packet_length) noexcept
         break;
 
     case 3:
-        if (m_rxBuffer[location[0] + 1] == '-') //如果是负号
+        if (m_rxBuffer[location[0] + 1] == '-') // 如果是负号
         {
             m_sensorData.temperature = -(m_rxData[arrey_conut++] + m_rxData[arrey_conut++] * 0.1f + m_rxData[arrey_conut++] * 0.01f);
         }
@@ -116,7 +116,7 @@ void MS5837::inputData(uint8_t data) noexcept
 
     if (m_rxBuffer[rxCount - 1] != '\n')
     {
-        //还没收集到数据尾，展时不处理
+        // 还没收集到数据尾，展时不处理
         return;
     }
     ms5837_packet_length = rxCount;
