@@ -28,9 +28,6 @@
 #include <string>
 #include <vector>
 
-
-using Json = nlohmann::json;
-
 namespace jsonrpcpp
 {
 

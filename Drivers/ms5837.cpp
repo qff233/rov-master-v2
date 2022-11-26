@@ -1,6 +1,7 @@
 #define LOG_TAG "MS5837"
 #define LOG_LVL ELOG_LVL_INFO
 
+#include <regex>
 #include <elog.h> // log_e()
 #include <cctype> // isdigit()
 #include <wiringPi.h>
@@ -24,104 +25,50 @@ MS5837::MS5837()
         log_e("Unable to get the fd");
         return;
     }
-    // 后面要加初始化标志位
+    m_rxBuffer.resize(20);
 }
 
-void MS5837::rawToData(uint8_t packet_length) noexcept
+void MS5837::rawToData() noexcept
 {
-    static uint8_t rxDate_count;
-    static uint8_t rxCheck = 0; // 尾校验字
-    static uint8_t location[5]; // D标志位坐标
-    static uint8_t location_count;
-    static uint8_t location_diffren_termpe; // 标志位坐标差
-    static uint8_t location_diffren_depth;  // 标志位坐标差
-    static uint8_t arrey_conut;
-    /*-----------------t提取字符串中的数字和 标记小数点的位子------*/
-    for (int i = 0; i < packet_length; i++)
+    static const regex tempr{"T=(-?)([[:d:]]+).([[:d:]]+)D=(-?)([[:d:]]+).([[:d:]]+)(?:[[:s:]]|.)*"};
+
+    if (smatch m; regex_match(m_rxBuffer, m, tempr))
     {
-        if (isdigit(m_rxBuffer[i])) // 若为数字 存入数据数组中
-        {
-            m_rxData[rxDate_count++] = m_rxBuffer[i] - 48;
-        }
-        if (m_rxBuffer[i] == '.' || m_rxBuffer[i] == '=') // 若为小数点 标记两个小数点的位子 计算差值 用于下列
-        {
-            location[location_count++] = i;
-        }
-    }
-    location_diffren_termpe = location[1] - location[0];
-    location_diffren_depth = location[3] - location[2];
-    /*--------------------计算温度------------------------------*/
-    switch (location_diffren_termpe)
+        int temp{stoi(m[2])};
+        int tempdot{stoi(m[3])};
+        int depth{stoi(m[5])};
+        int depthdot{stoi(m[6])};
+        m_sensorData.temperature = temp + tempdot * 0.01f;
+        m_sensorData.depth = depth + depthdot * 0.01f;
+        if (m[1].str().find('-') != string::npos) m_sensorData.temperature *= -1;
+        if (m[4].str().find('-') != string::npos) m_sensorData.depth *= -1;
+    } else
     {
-    case 2:
-        m_sensorData.temperature = m_rxData[arrey_conut++] + m_rxData[arrey_conut++] * 0.1f + m_rxData[arrey_conut++] * 0.01f;
-        break;
-
-    case 3:
-        if (m_rxBuffer[location[0] + 1] == '-') // 如果是负号
-        {
-            m_sensorData.temperature = -(m_rxData[arrey_conut++] + m_rxData[arrey_conut++] * 0.1f + m_rxData[arrey_conut++] * 0.01f);
-        }
-        else
-            m_sensorData.temperature = 10 * m_rxData[arrey_conut++] + m_rxData[arrey_conut++] + m_rxData[arrey_conut++] * 0.1f + m_rxData[arrey_conut++] * 0.01f;
-        break;
-
-    case 4:
-        m_sensorData.temperature = 100 * m_rxData[arrey_conut++] + 10 * m_rxData[arrey_conut++] + m_rxData[arrey_conut++] + m_rxData[arrey_conut++] * 0.1f + m_rxData[arrey_conut++] * 0.01f;
-        break;
-
-    default:
-        log_e("Unable to parse raw data");
-        break;
+	std::string error_msg = "接受数格式化据错误 ";
+        error_msg += m_rxBuffer;
+	log_e(error_msg.c_str());
     }
-
-    switch (location_diffren_depth)
-    {
-    case 2:
-        m_sensorData.depth = m_rxData[arrey_conut++] + m_rxData[arrey_conut++] * 0.1f + m_rxData[arrey_conut++] * 0.01f;
-        break;
-
-    case 3:
-        if (m_rxBuffer[location[2] + 1] == '-')
-        {
-            m_sensorData.depth = -(m_rxData[arrey_conut++] + m_rxData[arrey_conut++] * 0.1f + m_rxData[arrey_conut++] * 0.01f);
-        }
-        else
-            m_sensorData.depth = 10 * m_rxData[arrey_conut++] + m_rxData[arrey_conut++] + m_rxData[arrey_conut++] * 0.1f + m_rxData[arrey_conut++] * 0.01f;
-        break;
-
-    default:
-        log_e("Unable to parse raw data");
-        break;
-    }
-
-    arrey_conut = 0;
-    location_count = 0;
-    rxDate_count = 0;
-    rxCheck = 1; // 校验位清零
 }
 
-void MS5837::inputData(uint8_t data) noexcept
+int MS5837::inputData(uint8_t data) noexcept
 {
     static uint8_t rxCount = 0; // 接收计数
-    static uint8_t ms5837_packet_length;
-
     m_rxBuffer[rxCount++] = data; // 将收到的数据存入缓冲区中
     if (m_rxBuffer[0] != 'T')
     {
         // 数据头不对，则重新开始寻找'T'数据头
         rxCount = 0; // 清空长度缓存
-        return;
+        return -1; //一般头不会不是T 返回-1表示错误
     }
-
     if (m_rxBuffer[rxCount - 1] != '\n')
     {
         // 还没收集到数据尾，展时不处理
-        return;
+        return 1; //表示写入数据为1字节
     }
-    ms5837_packet_length = rxCount;
-    rawToData(ms5837_packet_length);
+    rawToData();
+    m_rxBuffer[rxCount-1] = ' ';  // 实际上string[rxCount-1]并没有在clear的时候清除 手动清除防止只读前几位就送入格式化
     rxCount = 0; // 清空缓存区
+    return 0; // 写入数据为0字节 告诉外面跳出循环
 }
 
 const Ms5837Data &MS5837::getData() const noexcept

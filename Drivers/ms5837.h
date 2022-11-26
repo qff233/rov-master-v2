@@ -14,17 +14,16 @@ class MS5837
 public:
     MS5837();
 
-    void inputData(uint8_t data) noexcept;
+    int inputData(uint8_t data) noexcept; 
     const Ms5837Data& getData() const noexcept;
     int getFd() const noexcept;  //获取fd
 
 private:
     Ms5837Data m_sensorData;
-    uint8_t m_rxBuffer[20] = {0};
-    uint8_t m_rxData[20] = {0};
+    std::string m_rxBuffer;
     int m_serialFd;
 
-    void rawToData(uint8_t packet_length) noexcept;
+    void rawToData() noexcept;
 };
 
 #endif //__DRIVERS_MS5837_H__
