@@ -11,6 +11,7 @@ using namespace std;
 bool RPCAPP::info(const Json::Value& root, Json::Value& response)
 {
     response["温度"] = Json::Value(std::to_string(rovInfo.cpu.temperature) + " ℃");
+    response["航向角"] = Json::Value(std::to_string(rovInfo.jy901.yaw) + " °");
     return true;
 }
 
