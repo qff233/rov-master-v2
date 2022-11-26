@@ -11,10 +11,9 @@ EventJY901::EventJY901()
 
 void EventJY901::process() noexcept
 {
-    int jy_fd = m_jy901.getFd();
-    while(serialDataAvail(jy_fd)) {
-        uint8_t data = serialGetchar(jy_fd);
+    while(serialDataAvail(m_fd)) {
+        uint8_t data = serialGetchar(m_fd);
         if(!m_jy901.inputData(data)) break;
     }
-    std::cout << m_jy901.getYaw() << std::endl;
+    std::cout << "jy901:" << m_jy901.getYaw() << std::endl;
 }

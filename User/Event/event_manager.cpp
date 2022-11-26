@@ -28,10 +28,7 @@ void EventManager::run() noexcept
 	//if(event_count == 0) log_d("has idea time");
         for(int i = 0; i < event_count; ++i) {
             int fd = events[i].data.fd;
-            auto result = m_cbs.find(fd);
-            if(result == m_cbs.end()) continue;
-
-            result->second->process();
+            m_cbs[fd]->process();
         }
     }
 }
