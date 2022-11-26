@@ -4,6 +4,8 @@
 
 #include "utils.h"
 
+#include <cmath>
+
 uint32_t bubble_filter(uint32_t *value)
 {
     uint8_t i, j, swapFlag; //交换标志位

@@ -1,12 +1,12 @@
-#include "jy901.h"
 #include <wiringPi.h>
 #include <wiringSerial.h>
 #include <iostream>
 #include <elog.h>
 
+#include "User/Event/sensor_jy901.h"
+#include "User/Event/event_manager.h"
+
 int main() {
-    
-    // 初始化 EasyLogger
     elog_init();
     /* 设置 EasyLogger 日志格式 */
     elog_set_fmt(ELOG_LVL_ASSERT, ELOG_FMT_ALL);
@@ -19,22 +19,13 @@ int main() {
     elog_set_text_color_enabled(true);
     elog_start();
     wiringPiSetup();
-    log_i("123123123");
-    JY901 jy901;
-    int fd = jy901.getFd();
-    if(fd < 0) {
-        std::cout << "error" << std::endl;
-        return -1;
-    }
-	
-    for(int i = 0; i < 15; ++i) {
-	    delay(10);
-        while(serialDataAvail(fd)) {
-            uint8_t data = serialGetchar(fd);
-            jy901.inputData(data);
-        }
 
-   	std::cout << jy901.getYaw() << std::endl;
-    }
+    log_i("start");
+
+    EventManager eventMgr("sensor");
+    Event::ptr jy901_event = std::make_unique<EventJY901>();
+    eventMgr.addEvent(std::move(jy901_event));
+
+    eventMgr.run();
     return 0;
 }

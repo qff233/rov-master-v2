@@ -137,7 +137,7 @@ public:
     JY901(); //传入自定义的设备号和串口波特率
 
     //定义成员函数
-    void inputData(uint8_t data) noexcept;   //传入一个字节的原始串口数据包
+    int inputData(uint8_t data) noexcept;   //传入一个字节的原始串口数据包
     void reset() const noexcept;
 
     const Jy901Data& getData() const noexcept; //读取jy901的数据

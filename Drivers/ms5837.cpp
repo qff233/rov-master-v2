@@ -3,11 +3,12 @@
 
 #include <regex>
 #include <elog.h> // log_e()
-#include <cctype> // isdigit()
+#include <cctype> // isdigit)
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
 #include "ms5837.h"
+#include <iostream>
 
 #define MS5837_UART_DEV "/dev/ttyS1"
 #define MS5837_UART_BAUD 115200
@@ -26,11 +27,13 @@ MS5837::MS5837()
         return;
     }
     m_rxBuffer.resize(20);
+    // 后面要加初始化标志位
 }
 
 void MS5837::rawToData() noexcept
 {
     static const regex tempr{"T=(-?)([[:d:]]+).([[:d:]]+)D=(-?)([[:d:]]+).([[:d:]]+)(?:[[:s:]]|.)*"};
+    std::cout << m_rxBuffer << std::endl;
 
     if (smatch m; regex_match(m_rxBuffer, m, tempr))
     {
@@ -79,4 +82,12 @@ const Ms5837Data &MS5837::getData() const noexcept
 int MS5837::getFd() const noexcept
 {
     return m_serialFd;
+}
+
+float MS5837::getTemperature() const noexcept {
+    return m_sensorData.temperature;
+}
+
+float MS5837::getDepth() const noexcept {
+    return m_sensorData.depth;
 }

@@ -73,7 +73,7 @@ void JY901::reset() const noexcept
     serialPutdata(m_serialFd, m_JY901_RESET_CMD, JY901_CMD_LENGTH);
 }
 
-void JY901::inputData(uint8_t data) noexcept
+int JY901::inputData(uint8_t data) noexcept
 {
     static uint8_t rxCheck = 0; // 尾校验字
     static uint8_t rxCount = 0; // 接收计数
@@ -84,10 +84,10 @@ void JY901::inputData(uint8_t data) noexcept
     {
         // 数据头不对，则重新开始寻找0x55数据头
         rxCount = 0; // 清空缓存区
-        return;
+        return -1;
     }
     if (rxCount < JY901_PACKET_LENGTH)
-        return; // 数据不满11个，则返回
+        return 1; // 数据不满11个，则返回
 
     /*********** 只有接收满11个字节数据 才会进入以下程序 ************/
     for (int i = 0; i < JY901_PACKET_LENGTH - 1; i++)
@@ -141,6 +141,7 @@ void JY901::inputData(uint8_t data) noexcept
     }
     rxCount = 0; // 清空缓存区
     rxCheck = 0; // 校验位清零
+    return 0;
 }
 
 const Jy901Data &JY901::getData() const noexcept
