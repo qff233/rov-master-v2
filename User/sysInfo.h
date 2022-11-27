@@ -47,7 +47,6 @@ struct HostInfo
     propeller_directer_value_t propeller_directer_value;
     cJSON *propeller_parameters;
     rocket_raw_t rocket;
-    float pca9685_pwm_freq_calibration;
     float expect_depth_auv;
     float expect_rotate_auv;
     uint8_t debug_mode_enable;

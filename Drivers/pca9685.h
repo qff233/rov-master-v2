@@ -15,7 +15,7 @@ public:
     PCA9685(const int pinBase = PCA9685_PIN_BASE, float freq = 50);
     ~PCA9685();
 
-    void setPwmFreq(float freq) noexcept;
+    void setPwmFreq(float freq, float pwm_calibration) noexcept;
 private:
     int m_fd;
 

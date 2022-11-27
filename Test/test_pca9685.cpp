@@ -21,7 +21,7 @@ int main() {
     wiringPiSetup();
 
     PCA9685 pca9685;
-    pca9685.setPwmFreq(50);
+    pca9685.setPwmFreq(50, 0);
 	for (int i = 0; i < 6; i++) pwmWrite(PCA9685_PIN_BASE + i, 4000);
     for (;;);
     return 0;

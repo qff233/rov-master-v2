@@ -49,10 +49,6 @@
 #define SET_BIT(x) (1 << x)      // |
 #define RESET_BIT(x) (~(1 << x)) // &
 
-//临时内容最终代码需要删除----------------------------------
-static float temp_pca9685_pwm_calibration = 0.0;
-//临时内容最终代码需要删除----------------------------------
-
 PCA9685::PCA9685(const int pinBase, float freq) noexcept
 {
     int prev_settings;                      // 读取到的之前的寄存器值
@@ -114,7 +110,7 @@ PCA9685::~PCA9685()
     ResetAll(m_fd);
 }
 
-void PCA9685::setPwmFreq(float freq) noexcept
+void PCA9685::setPwmFreq(float freq, float pwm_calibration) noexcept
 {
     /**  MODE1 寄存器
      * Restart and set Mode1 register to our prefered mode:
@@ -138,7 +134,7 @@ void PCA9685::setPwmFreq(float freq) noexcept
      * prescale = round(osc_clock / (4096 * frequency)) - 1 , osc_clock = 25 MHz
      * round 为四舍五入,可以通过 +0.5 来实现
      */
-    int prescale = (int)((PCA9685_OSC_CLK / (4096 * freq) + 0) / (temp_pca9685_pwm_calibration + 1.0f)); // 1.034校准
+    int prescale = (int)((PCA9685_OSC_CLK / (4096 * freq) + 0) / (pwm_calibration + 1.0f)); // 1.034校准
 
     // Get settings and calc bytes for the different states.
     int settings = wiringPiI2CReadReg8(m_fd, PCA9685_MODE1) & RESET_BIT(7); // Set restart bit to 0
