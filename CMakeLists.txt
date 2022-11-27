@@ -8,9 +8,10 @@ set(CMAKE_CXX_STANDARD 14)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Libs)
 
+include_directories(.)
 include_directories(Drivers)
 include_directories(Libs/easylogger/inc)
-include_directories(.)
+include_directories(Libs/json-rpc-cxx/include)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -21,7 +22,13 @@ set(CMAKE_C_FLAGS_RELEASE "-O3 -w")
 set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -w")
 
-# add_executable(rov_master_se main.cpp Drivers/jy901.cpp Drivers/jy901.h config.h Drivers/ms5837.cpp Drivers/ms5837.h)
 add_subdirectory(Drivers)
+
+aux_source_directory(./User user_files)
+aux_source_directory(./User/Event user_event_files)
+aux_source_directory(./User/Connection user_connection_files)
+
+add_library(auv_user ${user_files} ${user_event_files} ${user_connection_files})
+
 add_subdirectory(Test)
 

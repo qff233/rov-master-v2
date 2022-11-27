@@ -1,30 +1,16 @@
-//
-// Created by fxf on 22-11-21.
-//
-
-#ifndef _RPCSERVER_H
-#define _RPCSERVER_H
+#ifndef __USER_CONNECTION_RPCSERVER_H__
+#define __USER_CONNECTION_RPCSERVER_H__
 
 #include <string>
-#include <jsonrpc.h>
 
-#include "rpcApp.h"
-
-#define RPC_SERVER_ADDRESS "127.0.0.1"
-#define RPC_SERVER_PORT 8888
+#include "jsonrpccxx/server.hpp"
 
 class RPCServer
 {
 public:
-    RPCServer(const std::string& address = RPC_SERVER_ADDRESS, uint16_t port = RPC_SERVER_PORT);
-
+    RPCServer(const std::string& address = "127.0.0.1", uint16_t port = 8888);
 private:
-    Json::Rpc::TcpServer* server;
-    RPCAPP* rpcapp;
-
-    void infoInit();
-    void controlInit();
-    void debugInit();
+    jsonrpccxx::JsonRpc2Server m_rpcserver;
 };
 
 #endif //_RPCSERVER_H
