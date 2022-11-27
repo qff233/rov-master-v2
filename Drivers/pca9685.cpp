@@ -109,6 +109,11 @@ PCA9685::PCA9685(const int pinBase, float freq) noexcept
     // 后面要加初始化标志位
 }
 
+PCA9685::~PCA9685()
+{
+    ResetAll(m_fd);
+}
+
 void PCA9685::setPwmFreq(float freq) noexcept
 {
     /**  MODE1 寄存器

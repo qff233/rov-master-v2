@@ -13,6 +13,7 @@ class PCA9685
 {
 public:
     PCA9685(const int pinBase = PCA9685_PIN_BASE, float freq = 50);
+    ~PCA9685();
 
     void setPwmFreq(float freq) noexcept;
 private:
