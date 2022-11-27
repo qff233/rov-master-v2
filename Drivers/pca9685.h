@@ -18,12 +18,13 @@ public:
 private:
     int m_fd;
 
-    static void PCA9685::PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
-    static void PCA9685::DigitalWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
-    static void PCA9685::SetPin(int fd, int pin, int tf) noexcept;
-    static void PCA9685::ResetPin(int fd, int pin, int tf) noexcept;
-    static void PCA9685::WritePwmToPin(int fd, int pin, int on, int off) noexcept;
-    static int PCA9685::GetRegAddress(int pin) noexcept;
+    static void PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
+    static void DigitalWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
+    static void ResetAll(int fd) noexcept;
+    static void SetPin(int fd, int pin, int tf) noexcept;
+    static void ResetPin(int fd, int pin, int tf) noexcept;
+    static void WritePwmToPin(int fd, int pin, int on, int off) noexcept;
+    static int GetRegAddress(int pin) noexcept;
 };
 
 #endif //__DRIVERS_PCA9685_H__

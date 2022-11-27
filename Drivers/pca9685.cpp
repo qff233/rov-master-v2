@@ -49,6 +49,10 @@
 #define SET_BIT(x) (1 << x)      // |
 #define RESET_BIT(x) (~(1 << x)) // &
 
+//临时内容最终代码需要删除----------------------------------
+static float temp_pca9685_pwm_calibration = 0.0;
+//临时内容最终代码需要删除----------------------------------
+
 PCA9685::PCA9685(const int pinBase, float freq) noexcept
 {
     int prev_settings;                      // 读取到的之前的寄存器值
@@ -100,7 +104,7 @@ PCA9685::PCA9685(const int pinBase, float freq) noexcept
     node->digitalWrite = DigitalWriteCallBack;
 
     // 重置所有输出
-    Reset(m_fd);
+    ResetAll(m_fd);
 
     // 后面要加初始化标志位
 }
@@ -129,7 +133,7 @@ void PCA9685::setPwmFreq(float freq) noexcept
      * prescale = round(osc_clock / (4096 * frequency)) - 1 , osc_clock = 25 MHz
      * round 为四舍五入,可以通过 +0.5 来实现
      */
-    int prescale = (int)((PCA9685_OSC_CLK / (4096 * freq) + 0) / (上位机.pca9685_pwm + 1.0f)); // 1.034校准
+    int prescale = (int)((PCA9685_OSC_CLK / (4096 * freq) + 0) / (temp_pca9685_pwm_calibration + 1.0f)); // 1.034校准
 
     // Get settings and calc bytes for the different states.
     int settings = wiringPiI2CReadReg8(m_fd, PCA9685_MODE1) & RESET_BIT(7); // Set restart bit to 0
@@ -206,4 +210,10 @@ int PCA9685::GetRegAddress(int pin) noexcept
 {
     // 计算获得对应引脚寄存器地址 (见datasheet P9)
     return (pin >= NUM_PINS ? LEDALL_ON_L : LED0_ON_L + 4 * pin);
+}
+
+void PCA9685::ResetAll(int fd) noexcept
+{
+    wiringPiI2CWriteReg16(fd, LEDALL_ON_L, 0x0);        // ALL_LED full ON  失能
+    wiringPiI2CWriteReg16(fd, LEDALL_ON_L + 2, 0x1000); // ALL_LED full OFF 使能
 }
