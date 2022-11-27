@@ -6,6 +6,7 @@
 #define _UTILS_H
 
 #include "config.h"
+#include <assert.h>
 
 #define SMOOTH_LENTH 1
 
@@ -16,5 +17,33 @@
 uint32_t bubble_filter(uint32_t *value);
 float kalman_filter(float *Original_Data);
 float value_smooth(float data);
+
+template<class T>
+class Global 
+{
+public:
+    static T* Get() { return *GetPPtr(); }
+    
+    template<typename... Args>
+    static void New(Args&&... args) 
+    { 
+        assert(Get() == nullptr);
+        *GetPPtr() = new T(std::forward<Args>(args)...);
+    }
+
+    static void Delete() 
+    {
+        if(Get() != nullptr) 
+        {
+            delete Get();
+            *GetPPtr() = nullptr;
+        }
+    }
+private:
+    static T** GetPPtr() {
+        static T* ptr = nullptr;
+        return &ptr;
+    }
+};
 
 #endif //_UTILS_H

@@ -2,18 +2,17 @@
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
-#include <iostream>
+#include "User/utils.h"
 
 EventMS5837::EventMS5837()
 {
-    m_fd = m_ms5837.getFd();
+    m_fd = Global<MS5837>::Get()->getFd();
 }
 
 void EventMS5837::process() noexcept
 {
     while(serialDataAvail(m_fd)) {
         uint8_t data = serialGetchar(m_fd);
-        if(!m_ms5837.inputData(data)) break;
+        if(!Global<MS5837>::Get()->inputData(data)) break;
     }
-    std::cout << m_ms5837.getDepth() << std::endl;
 }
