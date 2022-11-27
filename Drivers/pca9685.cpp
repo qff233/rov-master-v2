@@ -49,7 +49,7 @@
 #define SET_BIT(x) (1 << x)      // |
 #define RESET_BIT(x) (~(1 << x)) // &
 
-PCA9685::PCA9685(const int pinBase, float freq) noexcept
+PCA9685::PCA9685(const int pinBase, float freq)
 {
     int prev_settings;                      // 读取到的之前的寄存器值
     struct wiringPiNodeStruct *node = NULL; // 指针初始化为NULL，以免产生段错误
@@ -84,7 +84,7 @@ PCA9685::PCA9685(const int pinBase, float freq) noexcept
     }
 
     // 设置 PWM 频率，启动输出
-    setPwmFreq(freq);
+    setPwmFreq(freq, 0);
 
     // 创建节点 16 pins [0..15] + [16] for all
     node = wiringPiNewNode(pinBase, NUM_PINS + 1);

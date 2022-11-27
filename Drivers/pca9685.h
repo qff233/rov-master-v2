@@ -5,6 +5,8 @@
 #ifndef __DRIVERS_PCA9685_H__
 #define __DRIVERS_PCA9685_H__
 
+#include <wiringPi.h>
+
 #include "User/config.h"
 
 #define PCA9685_PIN_BASE 300
@@ -15,7 +17,7 @@ public:
     PCA9685(const int pinBase = PCA9685_PIN_BASE, float freq = 50);
     ~PCA9685();
 
-    void setPwmFreq(float freq, float pwm_calibration) noexcept;
+    void setPwmFreq(float freq, float pwm_calibration = 0.0f) noexcept;
 private:
     int m_fd;
 

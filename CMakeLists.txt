@@ -10,6 +10,7 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Libs)
 
 include_directories(Drivers)
 include_directories(Libs/easylogger/inc)
+include_directories(.)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
