@@ -13,6 +13,6 @@ void EventMS5837::process() noexcept
 {
     while(serialDataAvail(m_fd)) {
         uint8_t data = serialGetchar(m_fd);
-        if(!Global<MS5837>::Get()->inputData(data)) break;
+        Global<MS5837>::Get()->inputData(data);
     }
 }

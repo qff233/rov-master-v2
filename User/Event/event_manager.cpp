@@ -37,7 +37,7 @@ void EventManager::addEvent(Event::ptr event, EventType type) {
     int fd = event->getFd();
     epoll_event ep_event;
     ep_event.data.fd = fd;
-    ep_event.events = (int)type; // | EPOLLET;
+    ep_event.events = (int)type | EPOLLET;
 
     epoll_ctl(m_epfd, EPOLL_CTL_ADD, fd, &ep_event);
 

@@ -13,6 +13,6 @@ void EventJY901::process() noexcept
 {
     while(serialDataAvail(m_fd)) {
         uint8_t data = serialGetchar(m_fd);
-        if(!Global<JY901>::Get()->inputData(data)) break;
+        Global<JY901>::Get()->inputData(data);
     }
 }
