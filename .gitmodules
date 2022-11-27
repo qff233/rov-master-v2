@@ -1,0 +1,3 @@
+[submodule "jsonrpc"]
+	path = Libs/json-rpc-cxx
+	url = git@github.com:jsonrpcx/json-rpc-cxx.git
