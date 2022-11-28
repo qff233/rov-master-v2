@@ -4,27 +4,28 @@
 #include <memory>
 #include <functional>
 
-class Event 
+class EventBase 
 {
 public:
-    using ptr = std::unique_ptr<Event>;
+    using ptr = std::unique_ptr<EventBase>;
 
-    Event(int fd = 0);
-    virtual ~Event() = default;
+    EventBase(int fd = 0) : m_fd(fd) { }
+    virtual ~EventBase() = default;
 
     virtual void process() noexcept = 0;
 
-    int getFd() const;
+    int getFd() const noexcept { return m_fd; }
 protected:
     int m_fd;
 };
 
-class EventFunction : public Event
+class EventFunction : public EventBase
 {
 public:
-    EventFunction(int fd, std::function<void()> cb);
+    EventFunction(int fd, std::function<void()> cb)
+        : EventBase(fd), m_cb(cb) { }
 
-    void process() noexcept override;
+    void process() noexcept override { m_cb(); }
 private:
     std::function<void()> m_cb;
 };

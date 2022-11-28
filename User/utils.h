@@ -7,6 +7,8 @@
 
 #include "config.h"
 #include <assert.h>
+#include <cstdint>
+#include <utility>
 
 #define SMOOTH_LENTH 1
 

@@ -3,7 +3,7 @@ project(rov_master_v2)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Libs)
@@ -11,7 +11,9 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Libs)
 include_directories(.)
 include_directories(Drivers)
 include_directories(Libs/easylogger/inc)
+include_directories(Libs/wiringNP/wiringPi)
 include_directories(Libs/json-rpc-cxx/include)
+include_directories(Libs/json-rpc-cxx/vecdor)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -28,7 +30,7 @@ aux_source_directory(./User user_files)
 aux_source_directory(./User/Event user_event_files)
 aux_source_directory(./User/Connection user_connection_files)
 
-add_library(auv_user ${user_files} ${user_event_files} ${user_connection_files})
+add_library(ruv_user ${user_files} ${user_event_files} ${user_connection_files})
 
 add_subdirectory(Test)
 

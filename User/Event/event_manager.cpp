@@ -33,7 +33,7 @@ void EventManager::run() noexcept
     }
 }
 
-void EventManager::addEvent(Event::ptr event, EventType type) {
+void EventManager::addEvent(EventBase::ptr event, EventType type) {
     int fd = event->getFd();
     epoll_event ep_event;
     ep_event.data.fd = fd;
@@ -46,7 +46,7 @@ void EventManager::addEvent(Event::ptr event, EventType type) {
 
 void EventManager::addEvent(int fd, std::function<void()> cb, EventType type)
 {
-    Event::ptr event = std::make_unique<EventFunction>(fd, cb);
+    EventBase::ptr event = std::make_unique<EventFunction>(fd, cb);
     this->addEvent(std::move(event), type);
 }
 
