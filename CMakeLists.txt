@@ -10,10 +10,13 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Libs)
 
 include_directories(.)
 include_directories(Drivers)
-include_directories(Libs/easylogger/inc)
+include_directories(Libs/easyloggingpp/src)
 include_directories(Libs/wiringNP/wiringPi)
 include_directories(Libs/json-rpc-cxx/include)
-include_directories(Libs/json-rpc-cxx/vecdor)
+include_directories(Libs/json-rpc-cxx/vendor)
+
+add_subdirectory(Libs)
+add_subdirectory(Drivers)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -24,13 +27,13 @@ set(CMAKE_C_FLAGS_RELEASE "-O3 -w")
 set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -w")
 
-add_subdirectory(Drivers)
-
 aux_source_directory(./User user_files)
 aux_source_directory(./User/Event user_event_files)
 aux_source_directory(./User/Connection user_connection_files)
 
-add_library(ruv_user ${user_files} ${user_event_files} ${user_connection_files})
+add_library(rov_user ${user_files} 
+                     ${user_event_files} 
+                     ${user_connection_files})
 
 add_subdirectory(Test)
 

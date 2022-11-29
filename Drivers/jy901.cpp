@@ -1,10 +1,7 @@
-#define LOG_TAG "JY901"
-#define LOG_LVL ELOG_LVL_INFO
-
-#include <elog.h>
 #include <cstring>
 #include <wiringPi.h>
 #include <wiringSerial.h>
+#include <easylogging++.h>
 
 #include "jy901.h"
 
@@ -18,7 +15,7 @@ JY901::JY901()
     m_serialFd = serialOpen(JY901_UART_DEV, JY901_UART_BAUD);
     if (m_serialFd < 0)
     {
-        log_e("Unable to get the fd");
+        LOG(ERROR) << "Unable to get the fd";
         return;
     }
     // 后面要加初始化标志位

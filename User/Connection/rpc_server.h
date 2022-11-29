@@ -17,7 +17,7 @@ public:
     int start() noexcept;
     void stop() noexcept;
 
-    int addMethod(const std::string& method_name, jsonrpccxx::MethodHandle callback, const std::vector<std::string>& params = {}) noexcept;
+    void addMethod(const std::string& method_name, jsonrpccxx::MethodHandle callback, const std::vector<std::string>& params = {}) noexcept;
 
     const std::string& getAddress() const noexcept;
     uint16_t getPort() const noexcept;

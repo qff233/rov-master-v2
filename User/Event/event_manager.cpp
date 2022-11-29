@@ -1,9 +1,5 @@
 #include "event_manager.h"
 
-#define LOG_TAG "EventManager"
-#define LOG_LVL ELOG_LVL_DEBUG
-
-#include <elog.h>
 #include <unistd.h>
 
 EventManager::EventManager(const std::string& name, int time_out) noexcept

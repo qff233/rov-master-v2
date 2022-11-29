@@ -59,7 +59,7 @@ float kalman_filter(float *Original_Data)
  * @brief ms5837的均值滤波
  * @param data 未经滤波的深度数据
  */
-float value_smooth(float data)
+float smooth_filter(float data)
 {
     static float data_sum;
     static float data_ave;
@@ -80,11 +80,11 @@ float value_smooth(float data)
         return depth_last;       //数据异常 不进行下列计算
     }
     /* ---------------------均值滤波--------------------------- */
-    if (count == SMOOTH_LENTH)
+    if (count == SMOOTH_LENGTH)
     {
         data_sum += data ;
         data_ave = 0;
-        data_ave = data_sum / (SMOOTH_LENTH + 1);
+        data_ave = data_sum / (SMOOTH_LENGTH + 1);
         depth_last = data_ave;
         data_sum = data;
     }

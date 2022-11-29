@@ -1,13 +1,6 @@
-//
-// Created by fxf on 22-11-22.
-//
-
-#define LOG_TAG "PCA9685"
-#define LOG_LVL ELOG_LVL_INFO
-
-#include <elog.h>
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
+#include <easylogging++.h>
 
 #include "User/utils.h"
 
@@ -62,7 +55,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
     m_fd = wiringPiI2CSetupInterface(PCA9685_I2C_DEV, PCA9685_I2C_ADDR);
     if (m_fd < 0)
     {
-        log_e("Cannot init i2c dev");
+        LOG(ERROR) << "Cannot init i2c dev";
         return;
     }
 
@@ -71,7 +64,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
      */
     if ((prev_settings = wiringPiI2CReadReg8(m_fd, PCA9685_MODE1)) < 0)
     {
-        log_e("Dev no detect");
+        LOG(ERROR) << "Dev no detect";
         return;
     }
 
@@ -79,7 +72,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
 
     if (freq < 40 || freq > 1000)
     {
-        log_w("Freq range should be in [40, 1000]");
+        LOG(WARNING) << "Freq range should be in [40, 1000]";
         freq = constrain(freq, 40, 1000);
     }
 
@@ -90,7 +83,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
     node = wiringPiNewNode(pinBase, NUM_PINS + 1);
     if (!node)
     {
-        log_e("Cannot create new wiringPiNode");
+        LOG(ERROR) << "Cannot create new wiringPiNode";
         return;
     }
 

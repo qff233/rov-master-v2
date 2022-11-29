@@ -1,14 +1,10 @@
-#define LOG_TAG "MS5837"
-#define LOG_LVL ELOG_LVL_INFO
-
 #include <regex>
-#include <elog.h> // log_e()
 #include <cctype> // isdigit)
 #include <wiringPi.h>
 #include <wiringSerial.h>
+#include <easylogging++.h>
 
 #include "ms5837.h"
-#include <iostream>
 
 #define MS5837_UART_DEV "/dev/ttyS1"
 #define MS5837_UART_BAUD 115200
@@ -23,7 +19,7 @@ MS5837::MS5837()
     m_serialFd = serialOpen(MS5837_UART_DEV, MS5837_UART_BAUD);
     if (m_serialFd < 0)
     {
-        log_e("Unable to get the fd");
+        LOG(ERROR) << "Unable to get the fd";
         return;
     }
     m_rxBuffer.resize(20);
@@ -33,7 +29,6 @@ MS5837::MS5837()
 void MS5837::rawToData() noexcept
 {
     static const regex tempr{"T=(-?)([[:d:]]+).([[:d:]]+)D=(-?)([[:d:]]+).([[:d:]]+)(?:[[:s:]]|.)*"};
-    std::cout << m_rxBuffer << std::endl;
 
     if (smatch m; regex_match(m_rxBuffer, m, tempr))
     {
@@ -47,9 +42,7 @@ void MS5837::rawToData() noexcept
         if (m[4].str().find('-') != string::npos) m_sensorData.depth *= -1;
     } else
     {
-	std::string error_msg = "接受数格式化据错误 ";
-        error_msg += m_rxBuffer;
-	log_e(error_msg.c_str());
+        LOG(ERROR) << "接受数格式化据错误 " << m_rxBuffer;
     }
 }
 

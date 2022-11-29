@@ -1,3 +1,6 @@
 [submodule "jsonrpc"]
 	path = Libs/json-rpc-cxx
 	url = git@github.com:jsonrpcx/json-rpc-cxx.git
+[submodule "Libs/easyloggingpp"]
+	path = Libs/easyloggingpp
+	url = git@github.com:qff233/easyloggingpp.git

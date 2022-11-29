@@ -1,0 +1,72 @@
+{
+    "propeller": {
+        "propeller_pwm_freq_calibration": 0.0,
+        "propeller_parameters": {
+            "back_right": {
+                "deadzone_lower": -25,
+                "deadzone_upper": 18,
+                "power_positive": 0.45,
+                "power_negative": 0.45,
+                "reversed": false,
+                "enabled": true
+            },
+            "center_right": {
+                "deadzone_lower": -25,
+                "deadzone_upper": 13,
+                "power_positive": 0.8,
+                "power_negative": 0.8,
+                "reversed": false,
+                "enabled": true
+            },
+            "front_right": {
+                "deadzone_lower": -30,
+                "deadzone_upper": 8,
+                "power_positive": 0.45,
+                "power_negative": 0.45,
+                "reversed": false,
+                "enabled": true
+            },
+            "center_left": {
+                "deadzone_lower": -30,
+                "deadzone_upper": 13,
+                "power_positive": 0.8,
+                "power_negative": 0.8,
+                "reversed": true,
+                "enabled": true
+            },
+            "front_left": {
+                "deadzone_lower": -25,
+                "deadzone_upper": 17,
+                "power_positive": 0.45,
+                "power_negative": 0.45,
+                "reversed": true,
+                "enabled": true
+            },
+            "back_left": {
+                "deadzone_lower": -25,
+                "deadzone_upper": 18,
+                "power_positive": 0.45,
+                "power_negative": 0.45,
+                "reversed": true,
+                "enabled": true
+            }
+        },
+        "control_loop_parameters": {
+            "depth_lock": {
+                "p": 25.69,
+                "i": 5.34,
+                "d": 2.59
+            },
+            "direction_lock": {
+                "p": 7.38,
+                "i": 0.0,
+                "d": 0.0
+            }
+        }
+    },
+    "robot-arm": {
+        "pMax": 1100,
+        "nMax": 1600,
+        "speed": 500
+    }
+}
