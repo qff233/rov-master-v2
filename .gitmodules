@@ -4,3 +4,6 @@
 [submodule "Libs/easyloggingpp"]
 	path = Libs/easyloggingpp
 	url = git@github.com:qff233/easyloggingpp.git
+[submodule "Libs/WiringNP"]
+	path = Libs/WiringNP
+	url = git@github.com:friendlyarm/WiringNP.git
