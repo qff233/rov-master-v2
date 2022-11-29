@@ -19,7 +19,7 @@
 #define PCA9685_MODE1 0x0
 #define PCA9685_PRESCALE 0xFE // prescaler to program the output frequency
 
-#define NUM_PINS 16
+#define PCA9685_NUM_PINS 16
 
 #define LED0_ON_L 0x6
 #define LED0_ON_H 0x7
@@ -80,7 +80,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
     setPwmFreq(freq, 0);
 
     // 创建节点 16 pins [0..15] + [16] for all
-    node = wiringPiNewNode(pinBase, NUM_PINS + 1);
+    node = wiringPiNewNode(pinBase, PCA9685_NUM_PINS + 1);
     if (!node)
     {
         LOG(ERROR) << "Cannot create new wiringPiNode";
@@ -203,7 +203,7 @@ void PCA9685::WritePwmToPin(int fd, int pin, int on, int off) noexcept
 int PCA9685::GetRegAddress(int pin) noexcept
 {
     // 计算获得对应引脚寄存器地址 (见datasheet P9)
-    return (pin >= NUM_PINS ? LEDALL_ON_L : LED0_ON_L + 4 * pin);
+    return (pin >= PCA9685_NUM_PINS ? LEDALL_ON_L : LED0_ON_L + 4 * pin);
 }
 
 void PCA9685::ResetAll(int fd) noexcept

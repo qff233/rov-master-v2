@@ -143,7 +143,7 @@ public:
     const Jy901Data& getData() const noexcept; //读取jy901的数据
     int getFd() const noexcept;  //获取fd
     float getYaw() const noexcept;
-
+    float getZGyroZ() const noexcept;
 private:
     Jy901Data m_sensorData;    //传感器数据
     Jy901Raw m_sensorRaw; //传感器原始数据

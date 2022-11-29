@@ -1,15 +1,11 @@
-//
-// Created by fxf on 22-11-23.
-//
+#ifndef __USER_UTILS_H__
+#define __USER_UTILS_H__
 
-#ifndef _UTILS_H
-#define _UTILS_H
-
-#include "config.h"
 #include <cassert>
 #include <cstdint>
 #include <utility>
 #include <vector>
+#include <string>
 #include <string_view>
 
 #define SMOOTH_LENGTH 1
@@ -21,6 +17,8 @@
 uint32_t bubble_filter(uint32_t *value);
 float kalman_filter(float *Original_Data);  //卡尔曼滤波
 float smooth_filter(float data);             // 均值滤波
+
+std::vector<std::string> split(std::string_view str, std::string_view delim);
 
 template<class T>
 class Global 
