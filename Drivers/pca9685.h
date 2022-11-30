@@ -9,18 +9,22 @@
 
 #include "User/config.h"
 
-#define PCA9685_PIN_BASE 300
-
 class PCA9685
 {
 public:
-    PCA9685(const int pinBase = PCA9685_PIN_BASE, float freq = 50);
+    static const int HERTZ = 50;
+    static const int MAX_PWM = 4096;
+
+    static int PCA9685::CalcTicks(int16_t duty);
+
+    PCA9685(const int pinBase = 300, float freq = 50);
     ~PCA9685();
 
     void setPwmFreq(float freq, float pwm_calibration = 0.0f) noexcept;
+    int getPinBase();
 private:
     int m_fd;
-
+    int m_pinBase;
     static void PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
     static void DigitalWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
     static void ResetAll(int fd) noexcept;

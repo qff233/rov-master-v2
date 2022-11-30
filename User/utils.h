@@ -15,8 +15,30 @@
 #define deg2Rad(deg) (deg * M_PI / 180.0f) // 角度值转弧度制
 
 uint32_t bubble_filter(uint32_t *value);
-float kalman_filter(float *Original_Data);  //卡尔曼滤波
-float smooth_filter(float data);             // 均值滤波
+
+class KalmanFilter 
+{
+public:
+    KalmanFilter(float prevData = 0, float p = 10, float q = 0.0001, float r = 0.001,float kGain = 0);
+    float operator()(float Original_Data);
+private:
+    float prevData;
+    float p;
+    float q;
+    float r = 0.001;
+    float kGain = 0;
+};
+
+class SmoothFilter 
+{
+public:
+    float operator()(float data);
+private:
+    float data_sum;
+    float data_ave;
+    uint8_t count;
+    float depth_last;
+};
 
 std::vector<std::string> split(std::string_view str, std::string_view delim);
 
@@ -26,6 +48,13 @@ class Global
 public:
     static T* Get() { return *GetPPtr(); }
     
+    template<typename SubType, typename... Args>
+    static void New(Args&&... args) 
+    { 
+        assert(Get() == nullptr);
+        *GetPPtr() = new SubType(std::forward<Args>(args)...);
+    }
+
     template<typename... Args>
     static void New(Args&&... args) 
     { 

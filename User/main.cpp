@@ -43,6 +43,7 @@ int main()
     Global<JY901>::New();
     Global<MS5837>::New();
     Global<PCA9685>::New();
+    Global<ControlBase>::New<ControlV2>();
     Global<EventManager>::New("Driver");
     Global<RPCServer>::New("0.0.0.0", 8888);
 
@@ -63,8 +64,7 @@ int main()
     // ADD_METHOD(catch);
     Global<RPCServer>::Get()->addMethod("catch", jsonrpccxx::GetHandle(Method::catcher));  // 这个catch是关键字 做不了函数名 单拿出来 后面上位机改一下
     Global<RPCServer>::Get()->start();
-
-
+/*******************************************/
 
     while (true)
     {
@@ -72,9 +72,9 @@ int main()
         LOG(INFO) << Global<JY901>::Get()->getZGyro();
     }
     
-
     Global<RPCServer>::Delete();
     Global<EventManager>::Delete();
+    Global<ControlBase>::Delete();
     Global<JY901>::Delete();
     Global<MS5837>::Delete();
     Global<PCA9685>::Delete();

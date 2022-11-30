@@ -56,7 +56,16 @@ q,r的值需要我们试出来，讲白了就是(买的破温度计有多破，�
 q参数调整滤波后的曲线与实测曲线的相近程度，q越大越接近。
 r参数调滤波后的曲线平滑程度，r越大越平滑。
 */
-float kalman_filter(float *Original_Data)
+KalmanFilter::KalmanFilter(float prevData, float p, float q, float r,float kGain)
+    : prevData(prevData),
+      p(p),
+      q(q),
+      r(r),
+      kGain(kGain)
+{
+}
+
+float KalmanFilter::operator()(float original_data)
 {
     static float prevData = 0;
     static float p = 10, q = 0.0001, r = 0.001, kGain = 0;
@@ -64,32 +73,15 @@ float kalman_filter(float *Original_Data)
     p = p + q;
     kGain = p / (p + r);
 
-    *Original_Data = prevData + (kGain * (*Original_Data - prevData));
+    original_data = prevData + (kGain * (original_data - prevData));
     p = (1 - kGain) * p;
 
-    prevData = *Original_Data;
-
-    return *Original_Data;
+    prevData = original_data;
+    return original_data;
 }
 
-/**
- * @brief ms5837的均值滤波
- * @param data 未经滤波的深度数据
- */
-float smooth_filter(float data)
+float SmoothFilter::operator()(float data) 
 {
-    static float data_sum;
-    static float data_ave;
-    static char count;
-    static float depth_mark;        //初始深度。
-    static float depth_stand;       //初始深度。
-    static float depth_abort;       //异常深度。
-    static float depth_abort_flag;  //异常深度。
-    static float depth_abort_count; //异常深度。
-    static float depth_diffren;     //异常深度。
-    static float depth_last;        //历史深度。
-    static float ave_flag;          //历史深度
-    /*-----如果当前深度比上次深度差异过大，将当前深度作为异常深度*/
     if (fabs(depth_last - data)> 1)
     {
         data_sum = 0;

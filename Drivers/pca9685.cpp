@@ -43,6 +43,7 @@
 #define RESET_BIT(x) (~(1 << x)) // &
 
 PCA9685::PCA9685(const int pinBase, float freq)
+    : m_pinBase(pinBase)
 {
     int prev_settings;                      // 读取到的之前的寄存器值
     struct wiringPiNodeStruct *node = NULL; // 指针初始化为NULL，以免产生段错误
@@ -143,6 +144,20 @@ void PCA9685::setPwmFreq(float freq, float pwm_calibration) noexcept
     // Now wait a millisecond until oscillator finished stabilizing and restart PWM.
     delay(1);
     wiringPiI2CWriteReg8(m_fd, PCA9685_MODE1, restart);
+}
+
+int PCA9685::getPinBase() 
+{
+    return m_pinBase;
+}
+
+int PCA9685::CalcTicks(int16_t duty)
+{
+    float impulseMs;
+    static float cycleMs = 1000.0f / HERTZ; // 总周期20ms
+    impulseMs = duty / 1000.0f;             // 单位转换为ms
+
+    return (int)((impulseMs / cycleMs * MAX_PWM +2)/1.013);     // 当50hz时  校验-2 /1.005
 }
 
 void PCA9685::PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept

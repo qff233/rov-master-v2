@@ -3,6 +3,5 @@
 
 class EventPCA9685 : public EventBase {
 public:
-    EventPCA9685();
     void process() noexcept override;
 };

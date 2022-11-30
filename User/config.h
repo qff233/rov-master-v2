@@ -8,9 +8,19 @@
 #include <nlohmann/json.hpp>
 
 #include "concept.h"
+#include "control.h"
 #include "utils.h"
 
 using Json = nlohmann::json;
+
+void to_json(nlohmann::json &j, const PropellerParameters& p);
+void from_json(const nlohmann::json &j, PropellerParameters& p);
+
+void to_json(nlohmann::json &j, const PropellerGroup& p);
+void from_json(const nlohmann::json &j, PropellerGroup& p);
+
+void to_json(nlohmann::json &j, const PropellerAttribute& p);
+void from_json(const nlohmann::json &j, PropellerAttribute& p);
 
 class Config 
 {

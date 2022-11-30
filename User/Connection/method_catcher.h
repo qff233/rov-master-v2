@@ -13,5 +13,4 @@ Json catcher(float val)
     return nullptr;
 }
 
-
 }
