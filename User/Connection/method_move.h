@@ -1,22 +1,25 @@
-#include "nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 namespace Method 
 {
 
-struct Motion 
+using Json = nlohmann::json;
+
+Json move(float x, float y, float z, float rot) 
 {
-    float x;
-    float y;
-    float z;
-    float rot;
-};
-void to_json(nlohmann::json &j, const Motion& p);
-void from_json(const nlohmann::json &j, Motion& p);
+    LOG(INFO) << x << ", " << y << ", " << z << "," << rot;
+    return nullptr;
+}
 
+Json move_absolute(float x, float y, float z, float rot)
+{
+    return nullptr;
+}
 
-void move(const Motion);
-void move_absolute(const Motion);
-void move_relative(const Motion);
+Json move_relative(float x, float y, float z, float rot)
+{
+    return nullptr;
+}
 
 
 } //namespace Metho

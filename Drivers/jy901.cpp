@@ -156,7 +156,7 @@ float JY901::getYaw() const noexcept
     return m_sensorData.yaw;
 }
 
-float JY901::getZGyroZ() const noexcept 
+float JY901::getZGyro() const noexcept 
 {
     return m_sensorData.gyro.z;
 }

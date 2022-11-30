@@ -4,22 +4,38 @@
 
 EventManager::EventManager(const std::string& name, int time_out) noexcept
     :m_name(name),
-     m_timeOut(time_out)
+     m_timeOut(time_out),
+     m_isRunning(false)
 {
     m_epfd = epoll_create(25);
 }
 
-EventManager::~EventManager() noexcept {
+EventManager::~EventManager() noexcept 
+{
+    this->stop();
     close(m_epfd);
     for(const auto& [key, value] : m_cbs) {
         close(key);
     }
 }
 
+void EventManager::start() noexcept 
+{
+    m_thread = std::thread([this](){ this->run(); });
+}
+
+void EventManager::stop() noexcept 
+{
+    m_isRunning = false;
+    if(m_thread.joinable())
+        m_thread.join();
+}
+
 void EventManager::run() noexcept
 {
+    m_isRunning = true;
     static epoll_event events[30];
-    while(true) {
+    while(m_isRunning) {
         int event_count = epoll_wait(m_epfd, events, 30, m_timeOut);
 	//if(event_count == 0) log_d("has idea time");
         for(int i = 0; i < event_count; ++i) {
@@ -29,7 +45,8 @@ void EventManager::run() noexcept
     }
 }
 
-void EventManager::addEvent(EventBase::ptr event, EventType type) {
+void EventManager::addEvent(EventBase::ptr event, EventType type) 
+{
     int fd = event->getFd();
     epoll_event ep_event;
     ep_event.data.fd = fd;

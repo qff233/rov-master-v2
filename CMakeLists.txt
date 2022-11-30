@@ -34,5 +34,11 @@ add_library(rov_user ${user_files}
                      ${user_event_files} 
                      ${user_connection_files})
 
-add_subdirectory(Test)
+add_executable(rov_master ${user_files})
+target_link_libraries(rov_master rov_user 
+                                 rov_driver 
+                                 rov_libs
+                                 pthread)
+
+#add_subdirectory(Test)
 
