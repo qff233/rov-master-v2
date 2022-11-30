@@ -1,6 +1,7 @@
 #include <easylogging++.h>
 #include <nlohmann/json.hpp>
 
+
 namespace Method 
 {
 
@@ -11,5 +12,6 @@ Json catcher(float val)
     LOG(INFO) << "catcher" << val;
     return nullptr;
 }
+
 
 }
