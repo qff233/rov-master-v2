@@ -13,14 +13,20 @@
 
 using Json = nlohmann::json;
 
-void to_json(nlohmann::json &j, const PropellerParameters& p);
-void from_json(const nlohmann::json &j, PropellerParameters& p);
+void to_json(Json &j, const PropellerParameters& p);
+void from_json(const Json &j, PropellerParameters& p);
 
-void to_json(nlohmann::json &j, const PropellerGroup& p);
-void from_json(const nlohmann::json &j, PropellerGroup& p);
+void to_json(Json &j, const PropellerGroup& p);
+void from_json(const Json &j, PropellerGroup& p);
 
-void to_json(nlohmann::json &j, const PropellerAttribute& p);
-void from_json(const nlohmann::json &j, PropellerAttribute& p);
+void to_json(Json &j, const PropellerAttribute& p);
+void from_json(const Json &j, PropellerAttribute& p);
+
+void to_json(Json &j, const PIDParameters& p);
+void from_json(const Json &j, PIDParameters& p);
+
+void to_json(Json &j, const PWMDeviceParams& p);
+void from_json(const Json &j, PWMDeviceParams& p);
 
 class Config 
 {

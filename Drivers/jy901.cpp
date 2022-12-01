@@ -19,6 +19,13 @@ JY901::JY901()
         return;
     }
     // 后面要加初始化标志位
+
+    m_sensorData.yaw = NAN;
+}
+
+bool JY901::isValid() const noexcept
+{
+    return !std::isnan(m_sensorData.yaw);
 }
 
 void JY901::rawToData() noexcept
@@ -156,7 +163,27 @@ float JY901::getYaw() const noexcept
     return m_sensorData.yaw;
 }
 
-float JY901::getZGyro() const noexcept 
+float JY901::getRoll() const noexcept
+{
+    return m_sensorData.roll;
+}
+
+float JY901::getPitch() const noexcept
+{
+    return m_sensorData.pitch;
+}
+
+float JY901::getXGyro() const noexcept
+{
+    return m_sensorData.gyro.x;
+}
+
+float JY901::getYGyro() const noexcept
+{
+    return m_sensorData.gyro.y;
+}
+
+float JY901::getZGyro() const noexcept
 {
     return m_sensorData.gyro.z;
 }

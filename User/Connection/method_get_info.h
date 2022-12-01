@@ -1,5 +1,9 @@
 #include "nlohmann/json.hpp"
 
+#include "User/utils.h"
+#include "jy901.h"
+#include "ms5837.h"
+
 namespace Method 
 {
 
@@ -25,9 +29,9 @@ void to_json(nlohmann::json &j, const Info& info)
 Info get_info()
 {
     Info info;
-    info.depth = 111.12;
-    info.temperature = 232.13;
-    info.yaw = 21.23;
+    info.depth = Global<MS5837>::Get()->getDepth();
+    info.temperature = Global<MS5837>::Get()->getTemperature();
+    info.yaw = Global<JY901>::Get()->getYaw();
     return info;
 }
 

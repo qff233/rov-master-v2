@@ -18,6 +18,8 @@ public:
     const Ms5837Data& getData() const noexcept;
     int getFd() const noexcept;  //获取fd
 
+    bool isValid() const noexcept;
+    
     float getTemperature() const noexcept;
     float getDepth() const noexcept;
 private:

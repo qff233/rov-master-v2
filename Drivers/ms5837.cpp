@@ -1,4 +1,5 @@
 #include <regex>
+#include <cmath>
 #include <cctype> // isdigit)
 #include <wiringPi.h>
 #include <wiringSerial.h>
@@ -22,8 +23,15 @@ MS5837::MS5837()
         LOG(ERROR) << "Unable to get the fd";
         return;
     }
-    m_rxBuffer.resize(20);
-    // 后面要加初始化标志位
+    m_rxBuffer.resize(20); // 后面要加初始化标志位
+
+    m_sensorData.depth = NAN;
+    m_sensorData.temperature = NAN;
+}
+
+bool MS5837::isValid() const noexcept
+{
+    return !std::isnan(m_sensorData.depth);
 }
 
 void MS5837::rawToData() noexcept

@@ -10,47 +10,47 @@
 /* 时间 */
 struct STime
 {
-    unsigned char ucYear;
-    unsigned char ucMonth;
-    unsigned char ucDay;
-    unsigned char ucHour;
-    unsigned char ucMinute;
-    unsigned char ucSecond;
-    unsigned short usMiliSecond;
+    uint8_t ucYear;
+    uint8_t ucMonth;
+    uint8_t ucDay;
+    uint8_t ucHour;
+    uint8_t ucMinute;
+    uint8_t ucSecond;
+    uint16_t usMiliSecond;
 };
 
 /* 加速度 */
 struct SAcc
 {
-    short a[3];
-    short T;
+    int16_t a[3];
+    int16_t T;
 };
 
 /* 角速度 */
 struct SGyro
 {
-    short w[3];
-    short T;
+    int16_t w[3];
+    int16_t T;
 };
 
 /* 角度 */
 struct SAngle
 {
-    short angle[6];
-    short T;
+    int16_t angle[6];
+    int16_t T;
 };
 
 /* 磁场 */
 struct SMag
 {
-    short h[3];
-    short T;
+    int16_t h[3];
+    int16_t T;
 };
 
 /* 连接状态 */
 struct SDStatus
 {
-    short sDStatus[4];
+    int16_t sDStatus[4];
 };
 
 /* 气压/海拔 */
@@ -70,15 +70,15 @@ struct SLonLat
 /* GPS */
 struct SGPSV
 {
-    short sGPSHeight;
-    short sGPSYaw;
+    int16_t sGPSHeight;
+    int16_t sGPSYaw;
     long lGPSVelocity;
 };
 
 /* 四元素 */
 struct SQ
 {
-    short q[4];
+    int16_t q[4];
 };
 
 /* JY901 原始数据 */
@@ -108,9 +108,9 @@ struct Vector3f
 //x、y、z 三维整形
 struct Vector3s
 {
-    short x;
-    short y;
-    short z;
+    int16_t x;
+    int16_t y;
+    int16_t z;
 
 };
 
@@ -140,9 +140,15 @@ public:
     int inputData(uint8_t data) noexcept;   //传入一个字节的原始串口数据包
     void reset() const noexcept;
 
+    bool isValid() const noexcept;
+
     const Jy901Data& getData() const noexcept; //读取jy901的数据
     int getFd() const noexcept;  //获取fd
     float getYaw() const noexcept;
+    float getRoll() const noexcept;
+    float getPitch() const noexcept;
+    float getXGyro() const noexcept;
+    float getYGyro() const noexcept;
     float getZGyro() const noexcept;
 private:
     Jy901Data m_sensorData;    //传感器数据

@@ -1,6 +1,6 @@
 #!/bin/sh
 
 echo "======================安装WiringNP========================"
-cd ./lib/WiringNP/
+cd ./Libs/WiringNP
 chmod 755 build
 ./build

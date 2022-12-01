@@ -10,7 +10,7 @@
 #include "Event/event_manager.h"
 #include "Event/sensor_jy901.h"
 #include "Event/sensor_ms5837.h"
-#include "Event/sensor_pca9685.h"
+#include "Event/control_pca9685.h"
 
 #include "Connection/rpc_server.h"
 #include "Connection/method_move.h"
