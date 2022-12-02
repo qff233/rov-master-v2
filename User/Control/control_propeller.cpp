@@ -1,15 +1,27 @@
 #include "control_propeller.h"
 
+#include <easylogging++.h>
+#include <cstring>
 #include <jy901.h>
 #include <ms5837.h>
+#include <pca9685.h>
 
 #include "User/macro.h"
+#include "User/config.h"
+#include "User/utils.h"
 
 PropellerControlBase::PropellerControlBase(int PWMmed, int PWMPositiveMax, int PWMNegitiveMax)
     : m_PWMmed(PWMmed),
       m_PWMPositiveMax(PWMPositiveMax),
       m_PWMNegitiveMax(PWMNegitiveMax)
 {
+    m_params = Global<Config>::Get()->getValue("propeller",
+                                               PropellerParameters(),
+                                               [this](const Json &old_value, const Json &new_value) {
+                                                    // Global<PCA9685>::Get()->setPwmFreq();
+                                                    this->m_params = new_value.at("propeller_parameters");
+                                                    LOG(INFO) << "成功加载 propeller";
+                                               }).propellerGroup;
 }
 
 const int16_t *PropellerControlBase::get6RawData() noexcept
@@ -67,7 +79,11 @@ void PropellerControlBase::move_relative(float rocker_x, float rocker_y, float r
 
 void PropellerControlBase::move(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept
 {
-    auto tmp_flag = (ExpectDepthFlag | ExpectYawFlag | ExpectRollFlag | ExpectPitchFlag);
+    int tmp_flag = 0; // 将要消除哪些标志位
+    if (rocker_rot > 1.0 / 400)
+        tmp_flag |= ExpectYawFlag;
+    if (rocker_z > 1.0 / 400)
+        tmp_flag |= ExpectDepthFlag;
     m_flags = m_flags & (~tmp_flag);
 
     parse_rocker(rocker_x, rocker_y, rocker_z, rocker_rot);
@@ -156,10 +172,10 @@ void PropellerControlBase::do_pitchPower(int16_t pitch_power) noexcept
 
 void PropellerControlBase::final_handle()
 {
-    // 顺序不能乱 1.乘上输出功率系数  2.换符号  (符号正代表往前 网上)<-|->（符号正代表顺时针转 正转则占空超过1500加死区补偿）  3.死区补偿 4.加上中间量  5.限幅
-    // No.1
+    // 顺序不能乱 1.乘上输出功率系数  2.换符号(符号正代表往前 网上)<-|->（符号正代表顺时针转 正转则占空超过1500加死区补偿）3.失能掉禁用的推进器  4.死区补偿 5.加上中间量  6.限幅
+    // No.1 ******************一一一一一一一一一一一一一一****************************
 #define XX(position) \
-    m_powerOutput.position *= m_powerOutput.position > 0 ? m_params.position.powerPositive : m_params.position.powerNegative
+    m_powerOutput.position *= m_powerOutput.position > 0 ? m_params.position.powerPositive : m_params.position.powerNegative;
 
     XX(backLeft);
     XX(backRight);
@@ -169,17 +185,14 @@ void PropellerControlBase::final_handle()
     XX(frontRight);
 #undef XX
 
-    // No.2
+    // No.2 ******************二二二二二二二二二二二二二二****************************
     m_powerOutput.frontLeft *= -1;
     m_powerOutput.middleLeft *= -1;
     m_powerOutput.backLeft *= -1;
 
-    // No.3
-#define XX(position)                                               \
-    if (m_powerOutput.position > 0)                                \
-        m_powerOutput.position += m_params.position.deadZoneUpper; \
-    else                                                           \
-        m_powerOutput.position -= m_params.position.deadZoneLower
+#define XX(position)                \
+    if (m_params.position.reversed) \
+        m_powerOutput.position *= -1;
 
     XX(backLeft);
     XX(backRight);
@@ -188,8 +201,33 @@ void PropellerControlBase::final_handle()
     XX(frontLeft);
     XX(frontRight);
 #undef XX
+    // No.3 *******************三三三三三三三三三三三三三三**************************
+#define XX(position)                \
+    if (!m_params.position.enabled) \
+        m_powerOutput.position = 0;
 
-    // No.4
+    XX(backLeft);
+    XX(backRight);
+    XX(middleLeft);
+    XX(middleRight);
+    XX(frontLeft);
+    XX(frontRight);
+#undef XX
+    // No.4 *******************四四四四四四四四四四四四四四**************************
+#define XX(position)                                               \
+    if (m_powerOutput.position > 0)                                \
+        m_powerOutput.position += m_params.position.deadZoneUpper; \
+    else if (m_powerOutput.position < 0)                           \
+        m_powerOutput.position -= m_params.position.deadZoneLower;
+
+    XX(backLeft);
+    XX(backRight);
+    XX(middleLeft);
+    XX(middleRight);
+    XX(frontLeft);
+    XX(frontRight);
+#undef XX
+    // No.5 *******************五五五五五五五五五五五五五五**************************
 #define XX(position) \
     m_powerOutput.position += m_PWMmed
 
@@ -200,8 +238,7 @@ void PropellerControlBase::final_handle()
     XX(frontLeft);
     XX(frontRight);
 #undef XX
-
-    // No.5
+    // No.6 *******************六六六六六六六六六六六六六六**************************
 #define XX(position) \
     m_powerOutput.position = constrain(m_powerOutput.position, m_PWMNegitiveMax, m_PWMPositiveMax)
 
@@ -212,6 +249,11 @@ void PropellerControlBase::final_handle()
     XX(frontLeft);
     XX(frontRight);
 #undef XX
+}
+
+PropellerControlV1::PropellerControlV1(int PWMmed, int PWMPositiveMax, int PWMNegitiveMax)
+    : PropellerControlBase(PWMmed, PWMPositiveMax, PWMNegitiveMax)
+{
 }
 
 void PropellerControlV1::run() noexcept
@@ -230,16 +272,16 @@ void PropellerControlV1::run() noexcept
         m_flags |= ExpectYawFlag;
         m_expectAttitude.yaw = m_countAttitude.yaw;
     }
-    if (m_flags & RollLockFlag && !(m_flags & ExpectRollFlag))
-    {
-        m_flags |= ExpectRollFlag;
-        m_expectAttitude.roll = m_countAttitude.roll;
-    }
-    if (m_flags & PitchLockFlag && !(m_flags & ExpectPitchFlag))
-    {
-        m_flags |= ExpectPitchFlag;
-        m_expectAttitude.pitch = m_countAttitude.pitch;
-    }
+    // if (m_flags & RollLockFlag && !(m_flags & ExpectRollFlag))
+    // {
+    //     m_flags |= ExpectRollFlag;
+    //     m_expectAttitude.roll = m_countAttitude.roll;
+    // }
+    // if (m_flags & PitchLockFlag && !(m_flags & ExpectPitchFlag))
+    // {
+    //     m_flags |= ExpectPitchFlag;
+    //     m_expectAttitude.pitch = m_countAttitude.pitch;
+    // }
 
     /************************期望****************************/
     if (m_flags & ExpectDepthFlag && Global<MS5837>::Get()->isValid())
@@ -257,58 +299,57 @@ void PropellerControlV1::run() noexcept
             auto del_yaw = m_expectAttitude.yaw - m_countAttitude.yaw;
             do_yawPower(del_yaw);
         }
-        if (m_flags & ExpectRollFlag)
-        {
-            auto del_roll = m_expectAttitude.roll - m_countAttitude.roll;
-            do_rollPower(del_roll);
-        }
-        if (m_flags & ExpectPitchFlag)
-        {
-            auto del_pitch = m_expectAttitude.pitch - m_countAttitude.pitch;
-            do_pitchPower(del_pitch);
-        }
+        // if (m_flags & ExpectRollFlag)
+        // {
+        //     auto del_roll = m_expectAttitude.roll - m_countAttitude.roll;
+        //     do_rollPower(del_roll);
+        // }
+        // if (m_flags & ExpectPitchFlag)
+        // {
+        //     auto del_pitch = m_expectAttitude.pitch - m_countAttitude.pitch;
+        //     do_pitchPower(del_pitch);
+        // }
     } while (false);
 
     /*************************手柄操控****************************/
     do_planePower(m_rockerBuffer.x, m_rockerBuffer.y);
     do_yawPower(m_rockerBuffer.rot);
     do_depthPower(m_rockerBuffer.z);
-
     /**************************善后*******************************/
     final_handle();
 }
 
 // 改日再TODO
-void PropellerControlV2::run() noexcept
-{
-    auto current_pitch = Global<JY901>::Get()->getPitch();
-    auto current_roll = Global<JY901>::Get()->getRoll();
-    auto current_yaw = Global<JY901>::Get()->getYaw();
-    m_countAttitude.pitch = current_pitch - m_lastAttitude.pitch;
-    m_countAttitude.roll = current_roll - m_lastAttitude.roll;
-    m_countAttitude.yaw = current_yaw - m_lastAttitude.yaw;
-    m_lastAttitude.pitch = current_pitch;
-    m_lastAttitude.roll = current_roll;
-    m_lastAttitude.yaw = current_yaw;
+// void PropellerControlV2::run() noexcept
+// {
+//     auto current_pitch = Global<JY901>::Get()->getPitch();
+//     auto current_roll = Global<JY901>::Get()->getRoll();
+//     auto current_yaw = Global<JY901>::Get()->getYaw();
+//     m_countAttitude.pitch = current_pitch - m_lastAttitude.pitch;
+//     m_countAttitude.roll = current_roll - m_lastAttitude.roll;
+//     m_countAttitude.yaw = current_yaw - m_lastAttitude.yaw;
+//     m_lastAttitude.pitch = current_pitch;
+//     m_lastAttitude.roll = current_roll;
+//     m_lastAttitude.yaw = current_yaw;
 
-    if (m_flags & ExpectDepthFlag)
-    {
-        auto del_depth = m_expectAttitude.depth - Global<MS5837>::Get()->getDepth();
-    }
+//     if (m_flags & ExpectDepthFlag)
+//     {
+//         auto del_depth = m_expectAttitude.depth - Global<MS5837>::Get()->getDepth();
+//     }
 
-    if (m_flags & ExpectYawFlag)
-    {
-    }
+//     if (m_flags & ExpectYawFlag)
+//     {
+//     }
 
-    if (m_flags & ExpectRollFlag)
-    {
-    }
+//     if (m_flags & ExpectRollFlag)
+//     {
+//     }
 
-    if (m_flags & ExpectPitchFlag)
-    {
-    }
+//     if (m_flags & ExpectPitchFlag)
+//     {
+//     }
 
-    m_powerOutput.frontLeft *= -1;
-    m_powerOutput.middleLeft *= -1;
-    m_powerOutput.backLeft *= -1;
-}
+//     m_powerOutput.frontLeft *= -1;
+//     m_powerOutput.middleLeft *= -1;
+//     m_powerOutput.backLeft *= -1;
+// }

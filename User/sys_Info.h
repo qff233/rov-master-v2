@@ -8,23 +8,6 @@
 #include "Drivers/jy901.h"
 #include "Drivers/ms5837.h"
 
-/* ROV设备 */
-struct RovDev
-{
-    // 简单PWM设备
-    EasyPWMDev yuntai;
-    EasyPWMDev light;
-    EasyPWMDev light2;
-    EasyPWMDev robot_arm;
-    // 推进器设备
-    PropellerPower propellerPower;
-};
-
-enum class SysStatus
-{
-
-};
-
 /* ROV状态信息 */
 struct RovInfo
 {
@@ -45,7 +28,7 @@ struct HostInfo
     pid_debug_arrey_t pid_debug_arrey;
     propeller_conpent_t propeller_conpent_value;
     propeller_directer_value_t propeller_directer_value;
-    cJSON *propeller_parameters;
+    // cJSON *propeller_parameters;
     rocket_raw_t rocket;
     float expect_depth_auv;
     float expect_rotate_auv;

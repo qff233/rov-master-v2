@@ -3,9 +3,8 @@
 
 #include <memory>
 
-#include "User/Event/control_pca9685.h"
-
 class Control;
+class EventPCA9685;
 
 struct PWMDeviceParams
 {
@@ -21,7 +20,7 @@ class PWMDevice
 public:
     friend EventPCA9685;
     friend Control;
-    using ptr = std::unique_ptr<PWMDevice>;
+    using ptr = std::shared_ptr<PWMDevice>;
 
     enum class Type
     {
@@ -30,7 +29,7 @@ public:
         Light
     };
 
-    PWMDevice(const std::string &name, int channel) noexcept;
+    PWMDevice(const std::string &name = "None", int channel = -1) noexcept;
 
     void resetPosition() noexcept;
     void positive() noexcept;

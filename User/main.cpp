@@ -1,16 +1,20 @@
 #include <easylogging++.h>
 #include "utils.h"
+#include "config.h"
 #include "macro.h"
+
+#include "Control/control.h"
+#include "Control/pwm_devices.h"
+#include "Control/control_propeller.h"
 
 #include "Drivers/jy901.h"
 #include "Drivers/ms5837.h"
 #include "Drivers/pca9685.h"
 
 #include "Event/event.h"
-#include "Event/event_manager.h"
 #include "Event/sensor_jy901.h"
 #include "Event/sensor_ms5837.h"
-#include "Event/control_pca9685.h"
+#include "Event/event_manager.h"
 
 #include "Connection/rpc_server.h"
 #include "Connection/method_move.h"
@@ -38,14 +42,16 @@ INITIALIZE_EASYLOGGINGPP
 int main() 
 {
     el::Loggers::configureFromGlobal("./logger.conf");
-
+    wiringPiSetup();
     Global<Config>::New();
     Global<JY901>::New();
     Global<MS5837>::New();
     Global<PCA9685>::New();
-    Global<ControlBase>::New<ControlV2>();
+    Global<Control>::New<>(std::make_unique<PropellerControlV1>());
     Global<EventManager>::New("Driver");
     Global<RPCServer>::New("0.0.0.0", 8888);
+
+/****************加载配置文件****************/
 
     Global<Config>::Get()->load_from_file("config.json");
 
@@ -53,8 +59,12 @@ int main()
     using Type = EventManager::EventType;
     add_event<EventJY901>(Type::READ);
     add_event<EventMS5837>(Type::READ);
-    add_event<EventPCA9685>(Type::WRITE);
     Global<EventManager>::Get()->start();
+
+/*************添加设置pwm设备****************/
+    PWMDevice::ptr catcher = std::make_unique<PWMDevice>("robot-arm", 12);  // 名字与配置文件的名对应 / 频道12
+    Global<Control>::Get()->addPWMDevice(std::move(catcher));
+    Global<Control>::Get()->start();
 
 /****************RPC_Method*****************/
     ADD_METHOD(get_info);
@@ -68,13 +78,13 @@ int main()
 
     while (true)
     {
-        sleep(1);
+        sleep(2);
         LOG(INFO) << Global<JY901>::Get()->getZGyro();
     }
     
     Global<RPCServer>::Delete();
     Global<EventManager>::Delete();
-    Global<ControlBase>::Delete();
+    Global<Control>::Delete();
     Global<JY901>::Delete();
     Global<MS5837>::Delete();
     Global<PCA9685>::Delete();

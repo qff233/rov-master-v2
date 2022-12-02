@@ -2,14 +2,20 @@
 #define __USER_CONTROL_H__
 
 #include <thread>
+#include <vector>
+#include <memory>
 
-#include "pwm_devices.h"
-#include "Control/control_propeller.h"
+class PropellerControlBase;
+class PWMDevice;
+
+class EventPCA9685;
 
 class Control
 {
 public:
-    Control(PropellerControlBase::ptr&& propellerControl);
+    friend EventPCA9685;
+
+    Control(std::unique_ptr<PropellerControlBase> &&propellerControl);
     ~Control();
 
     void move(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept;
@@ -23,15 +29,18 @@ public:
     void start();
     void stop();
 
-    void addPWMDevice(PWMDevice::ptr &&device);
+    void addPWMDevice(std::shared_ptr<PWMDevice> device);
+
 private:
-    const std::vector<PWMDevice::ptr> &getPwmDevices() noexcept;
+    const int16_t *get6RawData() noexcept; // 注意 长度为6
+    const std::vector<std::shared_ptr<PWMDevice>> &getPwmDevices() noexcept;
     void run();
+
 private:
     std::thread m_thread;
     bool m_isRunning = false;
-    PropellerControlBase::ptr m_propeller;
-    std::vector<PWMDevice::ptr> m_pwmDevices;
+    std::unique_ptr<PropellerControlBase> m_propeller;
+    std::vector<std::shared_ptr<PWMDevice>> m_pwmDevices;
 };
 
 #endif

@@ -1,9 +1,10 @@
+#include "jy901.h"
+
 #include <cstring>
+#include <cmath>
 #include <wiringPi.h>
 #include <wiringSerial.h>
 #include <easylogging++.h>
-
-#include "jy901.h"
 
 #define JY901_UART_DEV "/dev/ttyS2" // JY901 UART 号
 #define JY901_UART_BAUD 9600        // JY901 UART 波特率

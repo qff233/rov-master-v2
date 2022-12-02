@@ -3,51 +3,51 @@
         "propeller_pwm_freq_calibration": 0.0,
         "propeller_parameters": {
             "back_right": {
-                "deadzone_lower": -25,
-                "deadzone_upper": 18,
+                "deadzone_lower": 0,
+                "deadzone_upper": 0,
                 "power_positive": 0.45,
                 "power_negative": 0.45,
                 "reversed": false,
                 "enabled": true
             },
             "center_right": {
-                "deadzone_lower": -25,
-                "deadzone_upper": 13,
-                "power_positive": 0.8,
-                "power_negative": 0.8,
+                "deadzone_lower": 0,
+                "deadzone_upper": 0,
+                "power_positive": 0.45,
+                "power_negative": 0.45,
                 "reversed": false,
                 "enabled": true
             },
             "front_right": {
-                "deadzone_lower": -30,
-                "deadzone_upper": 8,
+                "deadzone_lower": 0,
+                "deadzone_upper": 0,
                 "power_positive": 0.45,
                 "power_negative": 0.45,
                 "reversed": false,
                 "enabled": true
             },
             "center_left": {
-                "deadzone_lower": -30,
-                "deadzone_upper": 13,
-                "power_positive": 0.8,
-                "power_negative": 0.8,
-                "reversed": true,
+                "deadzone_lower": 0,
+                "deadzone_upper": 0,
+                "power_positive": 0.45,
+                "power_negative": 0.45,
+                "reversed": false,
                 "enabled": true
             },
             "front_left": {
-                "deadzone_lower": -25,
-                "deadzone_upper": 17,
+                "deadzone_lower": 0,
+                "deadzone_upper": 0,
                 "power_positive": 0.45,
                 "power_negative": 0.45,
-                "reversed": true,
+                "reversed": false,
                 "enabled": true
             },
             "back_left": {
-                "deadzone_lower": -25,
-                "deadzone_upper": 18,
+                "deadzone_lower": 0,
+                "deadzone_upper": 0,
                 "power_positive": 0.45,
                 "power_negative": 0.45,
-                "reversed": true,
+                "reversed": false,
                 "enabled": true
             }
         },

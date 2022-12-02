@@ -7,15 +7,13 @@
 
 #include <wiringPi.h>
 
-#include "User/config.h"
-
 class PCA9685
 {
 public:
     static const int HERTZ = 50;
     static const int MAX_PWM = 4096;
 
-    static int PCA9685::CalcTicks(int16_t duty);
+    static int CalcTicks(int16_t duty);
 
     PCA9685(const int pinBase = 300, float freq = 50);
     ~PCA9685();

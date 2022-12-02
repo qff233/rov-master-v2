@@ -1,10 +1,11 @@
+#include "pca9685.h"
+
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include <easylogging++.h>
 
 #include "User/utils.h"
-
-#include "pca9685.h"
+#include "User/macro.h"
 
 #define PCA9685_I2C_DEV "/dev/i2c-0" // PCA9685 使用的 I2C设备
 #define PCA9685_I2C_ADDR 0x40        // 将A0-A5全部接地，则其器件地址为:0x40
@@ -65,7 +66,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
      */
     if ((prev_settings = wiringPiI2CReadReg8(m_fd, PCA9685_MODE1)) < 0)
     {
-        LOG(ERROR) << "Dev no detect";
+        LOG(ERROR) << "PCA9685 no detect";
         return;
     }
 

@@ -34,7 +34,7 @@ void RPCServer::stop() noexcept
 
 void RPCServer::addMethod(const std::string& method_name, jsonrpccxx::MethodHandle callback, const std::vector<std::string>& params) noexcept 
 {
-    LOG(DEBUG) << "RPCServer::addMethod " << method_name;
+    // LOG(DEBUG) << "RPCServer::addMethod " << method_name;
     m_rpcserver.Add(method_name, callback, params);
 }
 

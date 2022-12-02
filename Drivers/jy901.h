@@ -1,11 +1,10 @@
 #ifndef __DRIVERS_JY901_H__
 #define __DRIVERS_JY901_H__
 
-#include "User/config.h"
-
 #define JY901_PACKET_LENGTH 11   // JY901 数据包长度
 #define JY901_CMD_LENGTH 5       // JY901 命令长度
 
+#include <cstdint>
 
 /* 时间 */
 struct STime

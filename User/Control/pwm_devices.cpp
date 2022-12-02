@@ -1,8 +1,14 @@
 #include "pwm_devices.h"
 
+#include "User/utils.h"
+#include "User/config.h"
+
 PWMDevice::PWMDevice(const std::string &name, int channel) noexcept
     : m_channel(channel)
 {
+    if(channel == -1)
+        return;
+
     m_params = Global<Config>::Get()
                    ->getValue(name,
                               PWMDeviceParams{.speed = 500,
@@ -63,23 +69,22 @@ void PWMDevice::doNegitive() noexcept
 
 void PWMDevice::run() noexcept
 {
-    using enum State;
     switch (m_state)
     {
-    case GoNegitive:
+    case State::GoNegitive:
         this->doNegitive();
         if (m_params.cur == m_params.pMax)
-            m_state = Stop;
+            m_state = State::Stop;
         break;
-    case GoPositive:
+    case State::GoPositive:
         this->doPositive();
         if (m_params.cur == m_params.pMax)
-            m_state = Stop;
+            m_state = State::Stop;
         break;
-    case Reset:
+    case State::Reset:
         this->doResetPosition();
         if (m_params.cur == m_params.mid)
-            m_state = Stop;
+            m_state = State::Stop;
         break;
     default:
         break;

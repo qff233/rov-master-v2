@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(rov_master_v2)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -22,20 +22,21 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_CXX_FLAGS "-fconcepts")
 set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -w")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -w -DNDEBUG")
 
 aux_source_directory(./User user_files)
 aux_source_directory(./User/Event user_event_files)
+aux_source_directory(./User/Control user_control_files)
 aux_source_directory(./User/Connection user_connection_files)
 
 add_library(rov_user ${user_files} 
                      ${user_event_files} 
+                     ${user_control_files} 
                      ${user_connection_files})
 
-add_executable(rov_master ${user_files})
-target_link_libraries(rov_master rov_user 
+add_executable(rovmaster ${user_files})
+target_link_libraries(rovmaster rov_user 
                                  rov_driver 
                                  rov_libs
                                  pthread)

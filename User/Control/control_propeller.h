@@ -4,17 +4,25 @@
 #include <memory>
 
 #include "User/macro.h"
-#include "pwm_devices.h"
-#include "User/Event/control_pca9685.h"
+
+class EventPCA9685;
+class Control;
+
+struct PIDParameters
+{
+    double p;
+    double i;
+    double d;
+};
 
 struct PropellerAttribute
 {
-    int deadZoneUpper;    // 死区上限
-    int deadZoneLower;    // 死区下限
-    double powerPositive; // 正向动力百分比
-    double powerNegative; // 反向动力百分比
-    int reversed;         // 反转
-    int enabled;          // 启用/禁用推进器
+    int deadZoneUpper = 0;      // 死区上限
+    int deadZoneLower = 0;      // 死区下限
+    double powerPositive = 0.8; // 正向动力百分比
+    double powerNegative = 0.8; // 反向动力百分比
+    int reversed = false;       // 反转
+    int enabled = true;         // 启用/禁用推进器
 };
 
 struct PropellerGroup
@@ -25,13 +33,6 @@ struct PropellerGroup
     PropellerAttribute frontLeft;
     PropellerAttribute middleLeft;
     PropellerAttribute backLeft;
-};
-
-struct PIDParameters
-{
-    double p;
-    double i;
-    double d;
 };
 
 struct ControlLoopParameters
@@ -54,7 +55,7 @@ public:
     friend Control;
     using ptr = std::unique_ptr<PropellerControlBase>;
 
-    PropellerControlBase(int m_PWMmed = 1500, int m_PWMPositiveMax = 2000, int m_PWMNegitiveMax = 2000);
+    PropellerControlBase(int PWMmed = 1500, int PWMPositiveMax = 2000, int PWMNegitiveMax = 1000);
     virtual ~PropellerControlBase() = default;
 
     virtual void move(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept;
@@ -91,14 +92,7 @@ protected:
         float pitch; // <--让countAttitude到达的值
     };
 
-    struct LastAttitude
-    {
-        float yaw = 0;
-        float roll = 0;
-        float pitch = 0;
-    };
-
-    struct CountAttitude // 初始化为0
+    struct Attitude
     {
         float yaw = 0;
         float roll = 0;
@@ -111,7 +105,7 @@ protected:
         YawLockFlag = BITS(1),
         RollLockFlag = BITS(2),
         PitchLockFlag = BITS(3),
-        
+
         ExpectYawFlag = BITS(4),
         ExpectDepthFlag = BITS(5),
         ExpectRollFlag = BITS(6),
@@ -120,17 +114,18 @@ protected:
 
     uint32_t m_flags = 0;
     RockerData m_rockerBuffer;
-    LastAttitude m_lastAttitude;
-    CountAttitude m_countAttitude;
+    Attitude m_lastAttitude;
+    Attitude m_countAttitude;
     PropellerGroup m_params;
     PropellerPower m_powerOutput;
     ExpectAttitude m_expectAttitude;
     int m_PWMmed;
     int m_PWMPositiveMax;
     int m_PWMNegitiveMax;
+
 protected:
     void parse_rocker(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept;
-    void final_handle();  // 符号处理 && 功率输出系数 &&  死区补偿 && 转换 && 限幅
+    void final_handle(); // 符号处理 && 功率输出系数 &&  死区补偿 && 转换 && 限幅
     virtual void refreshData() noexcept;
     virtual void do_planePower(int16_t x_power, int16_t y_power) noexcept;
     virtual void do_depthPower(int16_t vertical_power) noexcept;
@@ -145,6 +140,9 @@ private:
 
 class PropellerControlV1 : public PropellerControlBase
 {
+public:
+    PropellerControlV1(int m_PWMmed = 1500, int m_PWMPositiveMax = 2000, int m_PWMNegitiveMax = 1000);
+
 private:
     void run() noexcept override;
 };

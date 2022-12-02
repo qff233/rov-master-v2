@@ -1,8 +1,6 @@
 #ifndef __DRIVERS_MS5837_H__
 #define __DRIVERS_MS5837_H__
 
-#include "User/config.h"
-
 struct Ms5837Data
 {
     float temperature;
