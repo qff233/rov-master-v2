@@ -101,6 +101,7 @@ void Control::run()
         for (auto &i : m_pwmDevices)
             i->run();
 
+
         static int pinBase = Global<PCA9685>::Get()->getPinBase();
         const int16_t *data = this->get6RawData();
         for (size_t i = 0; i < 6; ++i)
@@ -108,7 +109,6 @@ void Control::run()
             ::pwmWrite(pinBase + i, PCA9685::CalcTicks(data[i]));
         }
 
-        sleep(1);
         auto devices = this->getPwmDevices();
         for (const auto &i : devices)
         {
