@@ -2,10 +2,10 @@
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
-#include <easylogging++.h>
 
 #include "User/utils.h"
 #include "User/macro.h"
+#include "User/log.h"
 
 #define PCA9685_I2C_DEV "/dev/i2c-0" // PCA9685 使用的 I2C设备
 #define PCA9685_I2C_ADDR 0x40        // 将A0-A5全部接地，则其器件地址为:0x40
@@ -57,7 +57,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
     m_fd = wiringPiI2CSetupInterface(PCA9685_I2C_DEV, PCA9685_I2C_ADDR);
     if (m_fd < 0)
     {
-        LOG(ERROR) << "Cannot init i2c dev";
+        DRIVER_LOG_ERROR("Cannot init i2c dev");
         return;
     }
 
@@ -66,7 +66,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
      */
     if ((prev_settings = wiringPiI2CReadReg8(m_fd, PCA9685_MODE1)) < 0)
     {
-        LOG(ERROR) << "PCA9685 no detect";
+        DRIVER_LOG_ERROR("PCA9685 no detect");
         return;
     }
 
@@ -74,7 +74,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
 
     if (freq < 40 || freq > 1000)
     {
-        LOG(WARNING) << "Freq range should be in [40, 1000]";
+        DRIVER_LOG_ERROR("Freq range should be in [40, 1000]");
         freq = constrain(freq, 40, 1000);
     }
 
@@ -85,7 +85,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
     node = wiringPiNewNode(pinBase, PCA9685_NUM_PINS + 1);
     if (!node)
     {
-        LOG(ERROR) << "Cannot create new wiringPiNode";
+        DRIVER_LOG_ERROR("Cannot create new wiringPiNode");
         return;
     }
 

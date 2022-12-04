@@ -1,6 +1,5 @@
 #include "control_propeller.h"
 
-#include <easylogging++.h>
 #include <cstring>
 #include <jy901.h>
 #include <ms5837.h>
@@ -9,6 +8,7 @@
 #include "User/macro.h"
 #include "User/config.h"
 #include "User/utils.h"
+#include "User/log.h"
 
 PropellerControlBase::PropellerControlBase(int PWMmed, int PWMPositiveMax, int PWMNegitiveMax)
     : m_PWMmed(PWMmed),
@@ -17,11 +17,13 @@ PropellerControlBase::PropellerControlBase(int PWMmed, int PWMPositiveMax, int P
 {
     m_params = Global<Config>::Get()->getValue("propeller",
                                                PropellerParameters(),
-                                               [this](const Json &old_value, const Json &new_value) {
-                                                    // Global<PCA9685>::Get()->setPwmFreq();
-                                                    this->m_params = new_value.at("propeller_parameters");
-                                                    LOG(INFO) << "成功加载 propeller";
-                                               }).propellerGroup;
+                                               [this](const Json &old_value, const Json &new_value)
+                                               {
+                                                   // Global<PCA9685>::Get()->setPwmFreq();
+                                                   this->m_params = new_value.at("propeller_parameters");
+                                                   LOG_INFO("成功加载 propeller");
+                                               })
+                   .propellerGroup;
 }
 
 const int16_t *PropellerControlBase::get6RawData() noexcept
@@ -113,14 +115,8 @@ void PropellerControlBase::refreshData() noexcept
     memset(&m_powerOutput, 0, sizeof(m_powerOutput));
 }
 
-void PropellerControlBase::do_planePower(int16_t x_power, int16_t y_power) noexcept
+void PropellerControlBase::do_xPower(int16_t x_power) noexcept
 {
-    /**前后**/
-    m_powerOutput.frontLeft += y_power;
-    m_powerOutput.frontRight += y_power;
-    m_powerOutput.backLeft += y_power;
-    m_powerOutput.backRight += y_power;
-
     /******左右********
      *
      *   动力给正 右平移
@@ -136,10 +132,19 @@ void PropellerControlBase::do_planePower(int16_t x_power, int16_t y_power) noexc
     m_powerOutput.backRight += x_power;
 }
 
-void PropellerControlBase::do_depthPower(int16_t vertical_power) noexcept
+void PropellerControlBase::do_yPower(int16_t y_power) noexcept
 {
-    m_powerOutput.middleLeft += vertical_power;
-    m_powerOutput.middleRight += vertical_power;
+    /**前后**/
+    m_powerOutput.frontLeft += y_power;
+    m_powerOutput.frontRight += y_power;
+    m_powerOutput.backLeft += y_power;
+    m_powerOutput.backRight += y_power;
+}
+
+void PropellerControlBase::do_zPower(int16_t z_power) noexcept
+{
+    m_powerOutput.middleLeft += z_power;
+    m_powerOutput.middleRight += z_power;
 }
 
 void PropellerControlBase::do_yawPower(int16_t yaw_power) noexcept
@@ -287,7 +292,7 @@ void PropellerControlV1::run() noexcept
     if (m_flags & ExpectDepthFlag && Global<MS5837>::Get()->isValid())
     {
         auto del_depth = m_expectAttitude.depth - Global<MS5837>::Get()->getDepth();
-        do_depthPower(del_depth);
+        do_zPower(del_depth);
     }
 
     do
@@ -311,10 +316,11 @@ void PropellerControlV1::run() noexcept
         // }
     } while (false);
 
-    /*************************手柄操控****************************/
-    do_planePower(m_rockerBuffer.x, m_rockerBuffer.y);
+    /*************************手柄操控****************************/ // x左右 y前后 z沉浮
+    do_xPower(m_rockerBuffer.x);
+    do_yPower(m_rockerBuffer.y);
+    do_zPower(m_rockerBuffer.z);
     do_yawPower(m_rockerBuffer.rot);
-    do_depthPower(m_rockerBuffer.z);
     /**************************善后*******************************/
     final_handle();
 }

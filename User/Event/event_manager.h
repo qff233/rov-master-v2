@@ -9,6 +9,7 @@
 #include <thread>
 
 #include "event.h"
+#include "User/utils.h"
 
 class EventManager 
 {
@@ -39,5 +40,12 @@ private:
     std::thread m_thread;
     bool m_isRunning;
 };
+
+template<class T>
+void add_event(EventManager::EventType type = EventManager::EventType::READ)
+{
+    EventBase::ptr event = std::make_unique<T>();
+    Global<EventManager>::Get()->addEvent(std::move(event), type);
+}
 
 #endif

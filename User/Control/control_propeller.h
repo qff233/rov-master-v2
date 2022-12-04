@@ -126,9 +126,10 @@ protected:
 protected:
     void parse_rocker(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept;
     void final_handle(); // 符号处理 && 功率输出系数 &&  死区补偿 && 转换 && 限幅
-    virtual void refreshData() noexcept;
-    virtual void do_planePower(int16_t x_power, int16_t y_power) noexcept;
-    virtual void do_depthPower(int16_t vertical_power) noexcept;
+    void refreshData() noexcept;
+    virtual void do_xPower(int16_t x_power) noexcept;
+    virtual void do_yPower(int16_t y_power) noexcept;
+    virtual void do_zPower(int16_t z_power) noexcept;
     virtual void do_yawPower(int16_t yaw_power) noexcept;
     virtual void do_rollPower(int16_t roll_power) noexcept;
     virtual void do_pitchPower(int16_t pitch_power) noexcept;

@@ -4,7 +4,8 @@
 #include <cmath>
 #include <wiringPi.h>
 #include <wiringSerial.h>
-#include <easylogging++.h>
+
+#include "User/log.h"
 
 #define JY901_UART_DEV "/dev/ttyS2" // JY901 UART 号
 #define JY901_UART_BAUD 9600        // JY901 UART 波特率
@@ -16,7 +17,7 @@ JY901::JY901()
     m_serialFd = serialOpen(JY901_UART_DEV, JY901_UART_BAUD);
     if (m_serialFd < 0)
     {
-        LOG(ERROR) << "Unable to get the fd";
+        DRIVER_LOG_ERROR("Unable to get the fd");
         return;
     }
     // 后面要加初始化标志位
@@ -75,7 +76,7 @@ void JY901::rawToData() noexcept
 
 void JY901::reset() const noexcept
 {
-    serialPutdata(m_serialFd, m_JY901_RESET_CMD, JY901_CMD_LENGTH);
+    write(m_serialFd, m_JY901_RESET_CMD, JY901_CMD_LENGTH);
 }
 
 int JY901::inputData(uint8_t data) noexcept

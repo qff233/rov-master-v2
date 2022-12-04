@@ -10,7 +10,7 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Libs)
 
 include_directories(.)
 include_directories(Drivers)
-include_directories(Libs/easyloggingpp/src)
+include_directories(Libs/spdlog/include)
 include_directories(Libs/wiringNP/wiringPi)
 include_directories(Libs/json-rpc-cxx/include)
 include_directories(Libs/json-rpc-cxx/vendor)
@@ -38,7 +38,6 @@ add_library(rov_user ${user_files}
 add_executable(rovmaster ${user_files})
 target_link_libraries(rovmaster rov_user 
                                  rov_driver 
-                                 rov_libs
                                  pthread)
 
 #add_subdirectory(Test)

@@ -1,7 +1,5 @@
 #include "rpc_server.h"
 
-#include <easylogging++.h>
-
 RPCServer::RPCServer(const std::string& address, uint16_t port) noexcept 
     : m_address(address), m_port(port)
 {

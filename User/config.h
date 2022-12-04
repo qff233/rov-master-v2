@@ -4,10 +4,10 @@
 #include <string>
 #include <exception>
 #include <functional>
-#include <easylogging++.h>
 #include <nlohmann/json.hpp>
 
 // #include "concept.h"
+#include "log.h"
 
 using Json = nlohmann::json;
 
@@ -81,7 +81,7 @@ public:
         }
         catch (const std::exception &e)
         {
-            LOG(ERROR) << "没有此配置选项 key=" << key;
+            LOG_ERROR("没有此配置选项 key=", key);
         }
     }
 

@@ -1,7 +1,7 @@
-#include <easylogging++.h>
 #include "utils.h"
 #include "config.h"
 #include "macro.h"
+#include "log.h"
 
 #include "Control/control.h"
 #include "Control/pwm_devices.h"
@@ -36,13 +36,10 @@
 
 #include <unistd.h>
 
-
-INITIALIZE_EASYLOGGINGPP
-
 int main() 
 {
-    el::Loggers::configureFromGlobal("./logger.conf");
     wiringPiSetup();
+    Global<Log>::New();
     Global<Config>::New();
     Global<JY901>::New();
     Global<MS5837>::New();
@@ -79,7 +76,7 @@ int main()
     while (true)
     {
         sleep(2);
-        LOG(INFO) << Global<JY901>::Get()->getZGyro();
+        LOG_INFO(Global<JY901>::Get()->getZGyro());
     }
     
     Global<RPCServer>::Delete();

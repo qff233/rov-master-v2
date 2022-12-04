@@ -1,6 +1,5 @@
 #include "control.h"
 
-#include <easylogging++.h>
 #include <wiringPi.h>
 #include <pca9685.h>
 

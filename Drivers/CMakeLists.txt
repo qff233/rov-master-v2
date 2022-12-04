@@ -4,6 +4,5 @@ project(rov_driver)
 file(GLOB source_files "./*.c" "./*.cpp")
 add_library(rov_driver ${source_files})
 target_link_libraries(rov_driver 
-                        wiringPi 
-                        rov_libs)
+                        wiringPi)
                         

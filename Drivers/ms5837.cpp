@@ -3,9 +3,9 @@
 #include <cctype> // isdigit)
 #include <wiringPi.h>
 #include <wiringSerial.h>
-#include <easylogging++.h>
 
 #include "ms5837.h"
+#include "User/log.h"
 
 #define MS5837_UART_DEV "/dev/ttyS1"
 #define MS5837_UART_BAUD 115200
@@ -20,7 +20,7 @@ MS5837::MS5837()
     m_serialFd = serialOpen(MS5837_UART_DEV, MS5837_UART_BAUD);
     if (m_serialFd < 0)
     {
-        LOG(ERROR) << "Unable to get the fd";
+        DRIVER_LOG_ERROR("Unable to get the fd");
         return;
     }
     m_rxBuffer.resize(20); // 后面要加初始化标志位
@@ -50,7 +50,7 @@ void MS5837::rawToData() noexcept
         if (m[4].str().find('-') != string::npos) m_sensorData.depth *= -1;
     } else
     {
-        LOG(ERROR) << "接受数格式化据错误 " << m_rxBuffer;
+        DRIVER_LOG_ERROR("接受数格式化据错误 ", m_rxBuffer);
     }
 }
 

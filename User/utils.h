@@ -8,8 +8,6 @@
 #include <string>
 #include <string_view>
 
-#include "Event/event_manager.h"
-
 uint32_t bubble_filter(uint32_t *value);
 
 class KalmanFilter 
@@ -73,12 +71,5 @@ private:
         return &ptr;
     }
 };
-
-template<class T>
-void add_event(EventManager::EventType type = EventManager::EventType::READ)
-{
-    EventBase::ptr event = std::make_unique<T>();
-    Global<EventManager>::Get()->addEvent(std::move(event), type);
-}
 
 #endif //_UTILS_H
