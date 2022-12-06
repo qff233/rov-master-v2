@@ -44,10 +44,10 @@
 #define RESET_BIT(x) (~(1 << x)) // &
 
 PCA9685::PCA9685(const int pinBase, float freq)
-    : m_pinBase(pinBase)
+    : m_pinBase(pinBase),
+      m_node(nullptr)
 {
     int prev_settings;                      // 读取到的之前的寄存器值
-    struct wiringPiNodeStruct *node = NULL; // 指针初始化为NULL，以免产生段错误
 
     // PCA9685_EN_PIN，即 GPIOG11 低电平使能
     pinMode(PCA9685_EN_PIN, OUTPUT);
@@ -82,17 +82,17 @@ PCA9685::PCA9685(const int pinBase, float freq)
     setPwmFreq(freq, 0);
 
     // 创建节点 16 pins [0..15] + [16] for all
-    node = wiringPiNewNode(pinBase, PCA9685_NUM_PINS + 1);
-    if (!node)
+    m_node = wiringPiNewNode(pinBase, PCA9685_NUM_PINS + 1);
+    if (!m_node)
     {
         DRIVER_LOG_ERROR("Cannot create new wiringPiNode");
         return;
     }
 
     // 注册方法
-    node->fd = m_fd;
-    node->pwmWrite = PwmWriteCallBack;
-    node->digitalWrite = DigitalWriteCallBack;
+    m_node->fd = m_fd;
+    m_node->pwmWrite = PwmWriteCallBack;
+    m_node->digitalWrite = DigitalWriteCallBack;
 
     // 重置所有输出
     ResetAll(m_fd);
@@ -103,6 +103,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
 PCA9685::~PCA9685()
 {
     ResetAll(m_fd);
+    close(m_fd);
 }
 
 void PCA9685::setPwmFreq(float freq, float pwm_calibration) noexcept
@@ -147,7 +148,7 @@ void PCA9685::setPwmFreq(float freq, float pwm_calibration) noexcept
     wiringPiI2CWriteReg8(m_fd, PCA9685_MODE1, restart);
 }
 
-int PCA9685::getPinBase() 
+int PCA9685::getPinBase()
 {
     return m_pinBase;
 }
@@ -158,7 +159,7 @@ int PCA9685::CalcTicks(int16_t duty)
     static float cycleMs = 1000.0f / HERTZ; // 总周期20ms
     impulseMs = duty / 1000.0f;             // 单位转换为ms
 
-    return (int)((impulseMs / cycleMs * MAX_PWM +2)/1.013);     // 当50hz时  校验-2 /1.005
+    return (int)((impulseMs / cycleMs * MAX_PWM + 2) / 1.013); // 当50hz时  校验-2 /1.005
 }
 
 void PCA9685::PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept
@@ -168,6 +169,11 @@ void PCA9685::PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noe
 
     value = constrain(value, 0, 4096);
     WritePwmToPin(fd, ipin, 0, value);
+}
+
+void PCA9685::pwmWrite(int pin, int value) noexcept
+{
+    m_node -> pwmWrite(m_node, pin, value);
 }
 
 void PCA9685::DigitalWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept

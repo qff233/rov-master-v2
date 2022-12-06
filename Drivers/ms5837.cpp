@@ -29,6 +29,11 @@ MS5837::MS5837()
     m_sensorData.temperature = NAN;
 }
 
+MS5837::~MS5837()
+{
+    close(m_serialFd);
+}
+
 bool MS5837::isValid() const noexcept
 {
     return !std::isnan(m_sensorData.depth);

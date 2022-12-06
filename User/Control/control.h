@@ -4,6 +4,7 @@
 #include <thread>
 #include <vector>
 #include <memory>
+#include <semaphore>
 
 class PropellerControlBase;
 class PWMDevice;
@@ -38,6 +39,7 @@ private:
 
 private:
     std::thread m_thread;
+    std::binary_semaphore m_moveSemaphore{0};
     bool m_isRunning = false;
     std::unique_ptr<PropellerControlBase> m_propeller;
     std::vector<std::shared_ptr<PWMDevice>> m_pwmDevices;

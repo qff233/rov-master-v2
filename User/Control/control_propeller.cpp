@@ -24,6 +24,21 @@ PropellerControlBase::PropellerControlBase(int PWMmed, int PWMPositiveMax, int P
                                                    LOG_INFO("成功加载 propeller");
                                                })
                    .propellerGroup;
+
+    int pinBase = Global<PCA9685>::Get()->getPinBase();
+    for (size_t i = 0; i < 6; ++i)
+    {
+        Global<PCA9685>::Get()->pwmWrite(pinBase + i, PCA9685::CalcTicks(1550));
+    }
+
+    sleep(0.5); // 2s
+
+    for (size_t i = 0; i < 6; i++)
+    {
+        Global<PCA9685>::Get()->pwmWrite(pinBase + i, PCA9685::CalcTicks(1500));
+    }
+
+    sleep(1); // 2s
 }
 
 const int16_t *PropellerControlBase::get6RawData() noexcept

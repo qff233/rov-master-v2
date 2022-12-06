@@ -18,11 +18,15 @@ public:
     PCA9685(const int pinBase = 300, float freq = 50);
     ~PCA9685();
 
+    void pwmWrite(int pin, int value) noexcept;
     void setPwmFreq(float freq, float pwm_calibration = 0.0f) noexcept;
     int getPinBase();
+
 private:
     int m_fd;
     int m_pinBase;
+    wiringPiNodeStruct *m_node = nullptr;
+
     static void PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
     static void DigitalWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept;
     static void ResetAll(int fd) noexcept;

@@ -11,6 +11,7 @@ class MS5837
 {
 public:
     MS5837();
+    ~MS5837();
 
     int inputData(uint8_t data) noexcept; 
     const Ms5837Data& getData() const noexcept;

@@ -25,6 +25,11 @@ JY901::JY901()
     m_sensorData.yaw = NAN;
 }
 
+JY901::~JY901()
+{
+    close(m_serialFd);
+}
+
 bool JY901::isValid() const noexcept
 {
     return !std::isnan(m_sensorData.yaw);

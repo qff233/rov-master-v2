@@ -1,5 +1,6 @@
 #include "control.h"
 
+#include <chrono>
 #include <wiringPi.h>
 #include <pca9685.h>
 
@@ -25,6 +26,7 @@ const int16_t *Control::get6RawData() noexcept
 void Control::move(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept
 {
     m_propeller->move(rocker_x, rocker_y, rocker_z, rocker_rot);
+    m_moveSemaphore.release();
 }
 
 void Control::move_absolute(float rocker_x, float rocker_y, float rocker_z, float rot) noexcept
@@ -93,13 +95,14 @@ const std::vector<PWMDevice::ptr> &Control::getPwmDevices() noexcept
 
 void Control::run()
 {
+    m_moveSemaphore.try_acquire_for(50ms);
+
     while (m_isRunning)
     {
         m_propeller->run();
 
         for (auto &i : m_pwmDevices)
             i->run();
-
 
         static int pinBase = Global<PCA9685>::Get()->getPinBase();
         const int16_t *data = this->get6RawData();

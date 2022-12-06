@@ -133,7 +133,8 @@ class JY901
 {
 public:
     //定义构造与析构函数
-    JY901(); //传入自定义的设备号和串口波特率
+    JY901();
+    ~JY901();
 
     //定义成员函数
     int inputData(uint8_t data) noexcept;   //传入一个字节的原始串口数据包
