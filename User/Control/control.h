@@ -1,10 +1,12 @@
 #ifndef __USER_CONTROL_H__
 #define __USER_CONTROL_H__
 
+#include <mutex>
 #include <thread>
 #include <vector>
 #include <memory>
-#include <semaphore>
+#include <atomic>
+#include <condition_variable>
 
 class PropellerControlBase;
 class PWMDevice;
@@ -39,8 +41,10 @@ private:
 
 private:
     std::thread m_thread;
-    std::binary_semaphore m_moveSemaphore{0};
-    bool m_isRunning = false;
+    std::mutex m_mutex;
+    std::condition_variable m_cond_var;
+    
+    std::atomic_bool m_isRunning = false;
     std::unique_ptr<PropellerControlBase> m_propeller;
     std::vector<std::shared_ptr<PWMDevice>> m_pwmDevices;
 };

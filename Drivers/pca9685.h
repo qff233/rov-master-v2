@@ -6,6 +6,7 @@
 #define __DRIVERS_PCA9685_H__
 
 #include <wiringPi.h>
+#include <cstdint>
 
 class PCA9685
 {

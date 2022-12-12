@@ -47,7 +47,7 @@ PCA9685::PCA9685(const int pinBase, float freq)
     : m_pinBase(pinBase),
       m_node(nullptr)
 {
-    int prev_settings;                      // 读取到的之前的寄存器值
+    int prev_settings; // 读取到的之前的寄存器值
 
     // PCA9685_EN_PIN，即 GPIOG11 低电平使能
     pinMode(PCA9685_EN_PIN, OUTPUT);
@@ -173,7 +173,7 @@ void PCA9685::PwmWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noe
 
 void PCA9685::pwmWrite(int pin, int value) noexcept
 {
-    m_node -> pwmWrite(m_node, pin, value);
+    m_node->pwmWrite(m_node, pin, value);
 }
 
 void PCA9685::DigitalWriteCallBack(wiringPiNodeStruct *node, int pin, int value) noexcept
