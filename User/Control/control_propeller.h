@@ -8,13 +8,6 @@
 class EventPCA9685;
 class Control;
 
-struct PIDParameters
-{
-    double p;
-    double i;
-    double d;
-};
-
 struct PropellerAttribute
 {
     int deadZoneUpper = 0;      // 死区上限
@@ -58,9 +51,9 @@ public:
     PropellerControlBase(int PWMmed = 1500, int PWMPositiveMax = 2000, int PWMNegitiveMax = 1000);
     virtual ~PropellerControlBase() = default;
 
-    virtual void move(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept;
-    virtual void move_absolute(float rocker_x, float rocker_y, float rocker_z, float rot) noexcept;
-    virtual void move_relative(float rocker_x, float rocker_y, float rocker_z, float rot) noexcept;
+    virtual void move(float rocker_x, float rocker_y, float rocker_z, float rocker_yaw, float rocker_roll, float rocker_pitch) noexcept;
+    virtual void move_absolute(float rocker_x, float rocker_y, float rocker_z, float rocker_yaw, float rocker_roll, float rocker_pitch) noexcept;
+    virtual void move_relative(float rocker_x, float rocker_y, float rocker_z, float rocker_yaw, float rocker_roll, float rocker_pitch) noexcept;
     void to_depth(float depth) noexcept;
     void set_direction_locked(float val) noexcept;
     void set_depth_locked(float val) noexcept;
@@ -81,7 +74,9 @@ protected:
         int16_t x = 0;
         int16_t y = 0;
         int16_t z = 0;
-        int16_t rot = 0;
+        int16_t yaw = 0;
+        int16_t roll = 0;
+        int16_t pitch = 0;
     };
 
     struct ExpectAttitude // 对应的标志位为1时 有效
@@ -115,16 +110,16 @@ protected:
     uint32_t m_flags = 0;
     RockerData m_rockerBuffer;
     Attitude m_lastAttitude;
-    Attitude m_countAttitude;
+    Attitude m_delAttitude;
     PropellerGroup m_params;
-    PropellerPower m_powerOutput;
-    ExpectAttitude m_expectAttitude;
+    PropellerPower m_powerOutput{};
+    ExpectAttitude m_expectAttitude{};
     int m_PWMmed;
     int m_PWMPositiveMax;
     int m_PWMNegitiveMax;
 
 protected:
-    void parse_rocker(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept;
+    void parse_rocker(float rocker_x, float rocker_y, float rocker_z, float rocker_yaw, float rocker_roll, float rocker_pitch) noexcept;
     void final_handle(); // 符号处理 && 功率输出系数 &&  死区补偿 && 转换 && 限幅
     void refreshData() noexcept;
     virtual void do_xPower(int16_t x_power) noexcept;

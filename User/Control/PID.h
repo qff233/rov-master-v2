@@ -4,8 +4,12 @@
 class PID
 {
 public:
+    PID(double p, double i, double d);
 
 private:
+    double m_p;
+    double m_i;
+    double m_d;
 };
 
 #endif

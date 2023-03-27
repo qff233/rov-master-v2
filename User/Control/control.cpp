@@ -25,21 +25,21 @@ const int16_t *Control::get6RawData() noexcept
     return m_propeller->get6RawData();
 }
 
-void Control::move(float rocker_x, float rocker_y, float rocker_z, float rocker_rot) noexcept
+void Control::move(float rocker_x, float rocker_y, float rocker_z, float rocker_yaw, float rocker_roll, float rocker_pitch) noexcept
 {
-    m_propeller->move(rocker_x, rocker_y, rocker_z, rocker_rot);
+    m_propeller->move(rocker_x, rocker_y, rocker_z, rocker_yaw, rocker_roll, rocker_pitch);
     m_cond_var.notify_one();
 }
 
-void Control::move_absolute(float rocker_x, float rocker_y, float rocker_z, float rot) noexcept
+void Control::move_absolute(float rocker_x, float rocker_y, float rocker_z, float rocker_yaw, float rocker_roll, float rocker_pitch) noexcept
 {
-    m_propeller->move_absolute(rocker_x, rocker_y, rocker_z, rot);
+    m_propeller->move_absolute(rocker_x, rocker_y, rocker_z, rocker_yaw, rocker_roll, rocker_pitch);
     m_cond_var.notify_one();
 }
 
-void Control::move_relative(float rocker_x, float rocker_y, float rocker_z, float rot) noexcept
+void Control::move_relative(float rocker_x, float rocker_y, float rocker_z, float rocker_yaw, float rocker_roll, float rocker_pitch) noexcept
 {
-    m_propeller->move_relative(rocker_x, rocker_y, rocker_z, rot);
+    m_propeller->move_relative(rocker_x, rocker_y, rocker_z, rocker_yaw, rocker_roll, rocker_pitch);
     m_cond_var.notify_one();
 }
 

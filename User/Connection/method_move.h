@@ -11,7 +11,7 @@ using Json = nlohmann::json;
 
 Json move(float x, float y, float z, float rot) 
 {
-    Global<Control>::Get()->move(x, y, z, rot);
+    Global<Control>::Get()->move(x, y, z, rot, 0, 0);
     std::string msg = std::to_string(x*400) + ", " + std::to_string(y*400) + ", " + std::to_string(z*400) + "," + std::to_string(rot*400);
     LOG_INFO(msg);
     return nullptr;
